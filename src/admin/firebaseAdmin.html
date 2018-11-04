@@ -1,0 +1,55 @@
+<script type="text/x-red" data-template-name="firebase admin">
+ <div class="firestore">
+  <p>Provide contents of the service account file</p>
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name </label>
+    <input type="text" id="node-config-input-name">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-serviceAccountJson"><i class="fa fa-tag"></i> Service Account Json </label>
+    <textarea rows="4" type="text" id="node-config-input-serviceAccountJson" placeholder="paste serviceAccountJson content here"></textarea>
+  </div>
+ </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="firebase admin">
+    <p>This node open a connection to Firebase and provide reference to the firebase admin interface, as well as sub resources such as database.</p>
+</script>
+
+<style type="text/css">
+  .firestore .form-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) minmax(170px, 3fr);
+  }
+
+  .firestore .form-row input,
+  .firestore .form-row select,
+  .firestore .form-row textarea {
+    width: 100%;
+  }
+
+  .firestore .form-row textarea {
+    min-height: 300px;
+  }
+</style>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('firebase admin', {
+    category: 'config',
+    defaults: {
+      name: {required: false}
+    },
+    credentials: {
+      serviceAccountJson: {required: true}
+    },
+    label: function () {
+      return this.name || "[Nameless] Firebase Admin";
+    }
+  });
+</script>
+
+
+
+

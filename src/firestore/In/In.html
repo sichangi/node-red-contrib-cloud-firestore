@@ -1,0 +1,82 @@
+<script type="text/x-red" data-template-name="Firestore in">
+<div class="firestore">
+    <div class="form-row">
+      <label for="node-input-admin"><i class="fa fa-cogs"></i> Admin </label>
+      <input type="text" id="node-input-admin">
+    </div>
+    <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Node Name </label>
+      <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+      <label for="node-input-collection"><i class="fa fa-archive"></i> Collection </label>
+      <input type="text" id="node-input-collection">
+    </div>
+    <div class="form-row">
+      <label for="node-input-document"><i class="fa fa-file"></i> Document </label>
+      <input type="text" id="node-input-document" placeholder="doc name">
+    </div>
+    <div class="form-row">
+      <label for="node-input-realtime"><i class="fa fa-bolt"></i> Realtime </label>
+      <input type="checkbox" id="node-input-realtime">
+    </div>
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="Firestore in">
+    <p>The node fetches data from a referenced collection or referenced document</p>
+    <h3>Inputs</h3>
+    <p>Received on the <code>msg.firestore</code> property</p>
+    <dl class="message-properties">
+        <dt>
+          collection <span class="property-type">string</span>
+        </dt>
+        <dd>The collection reference point</dd>
+        <dt class="optional">
+          document <span class="property-type">string</span>
+        </dt>
+        <dd>The document reference to the set collection</dd>
+        <dt class="optional">
+          realtime <span class="property-type">boolean</span>
+          </dt>
+        <dd>If set, the node emits live data changes on the watched reference</dd>
+    </dl>
+    <p>
+      The above inputs can also be set from within the
+      node itself but can be overridden by corresponding message properties.
+    <br>
+    Sample <code>msg.firestore</code><br>
+    <pre>msg.firestore = {
+     collection: 'farm',
+     document: 'cows',
+     realtime: true // false by default
+    }</pre>
+    </p>
+    <h3>Outputs</h3>
+      Response data from the operation is output through the <code>msg.payload</code> property
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType('Firestore in', {
+    category: 'firebase',
+    defaults: {
+      name: {required: false},
+      collection: {required: true},
+      document: {required: false},
+      realtime: {required: false}
+      admin: {type: "firebase admin", required: true}
+    },
+    color: "#f06e00",
+    inputs: 1,
+    outputs: 1,
+    icon: "bridge.png",
+    align: "left",
+    label: function () {
+      return this.name || `/${this.collection}` || "Firestore in";
+    },
+    labelStyle: function () {
+      return (`/${this.collection}`) ? "node_label_italic" : "";
+    }
+  });
+</script>
+

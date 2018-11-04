@@ -1,0 +1,58 @@
+<script type="text/x-red" data-template-name="Realtime DB in">
+  <div class="form-tips"><p>Firebase database communication</p>
+    <div class="form-row">
+      <label for="node-input-admin"><i class="fa"></i> Firebase Admin</label>
+      <input type="text" id="node-input-admin">
+    </div>
+    <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Node Name </label>
+      <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+      <label for="node-input-ref"><i class="fa fa-tag"></i> Database Ref </label>
+      <input type="text" id="node-input-ref" placeholder="database ref">
+    </div>
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="Realtime DB in">
+    <p>This node get data from the database.</p>
+</script>
+
+<style type="text/css">
+  .node_label_white {
+    fill: white;
+  }
+  .node_label_white_italic {
+    fill: white;
+    font-style: italic;
+  }
+  #palette_node_firebase_in > div.palette_label {
+    color: white;
+  }
+</style>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('Realtime DB in',{
+    category: 'firebase',
+    defaults: {
+        name: {required: false},
+        ref: {required: true},
+        dataAtStart: {value: true, required: true},
+        admin: {type:"firebase admin",required: true}
+    },
+    color: "#ffcb2b",
+    inputs:0,
+    outputs:1,
+    icon: "bridge.png",
+    align: "left",
+    label: function() {
+        return this.name || this.ref || "Realtime DB in";
+    },
+    labelStyle: function() {
+        return (this.name || this.ref) ? "node_label_italic" : "";
+    }
+  });
+</script>
+

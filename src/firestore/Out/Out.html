@@ -1,0 +1,126 @@
+<script type="text/x-red" data-template-name="Firestore out">
+  <div class="firestore">
+    <div class="form-row">
+      <label for="node-input-admin"><i class="fa fa-cogs"></i> Admin</label>
+      <input type="text" id="node-input-admin">
+    </div>
+    <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Node Name </label>
+      <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+      <label for="node-input-operation"><i class="fa fa-wrench"></i> Operation </label>
+      <select name="operation" id="node-input-operation">
+        <option value="set">Set</option>
+        <option value="add">Add</option>
+        <option value="update">Update</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label for="node-input-collection"><i class="fa fa-archive"></i> Collection </label>
+      <input type="text" id="node-input-collection" placeholder="collection ref">
+    </div>
+    <div class="form-row">
+      <label for="node-input-document"><i class="fa fa-file"></i> Document </label>
+      <input type="text" id="node-input-document" placeholder="document ref">
+  </div>
+</div>
+</script>
+
+<script type="text/x-red" data-help-name="Firestore out">
+   <p>This node performs write operations to the referenced collection or document</p>
+   <h3>Inputs</h3>
+   <p>Data is received on the <code>msg.payload</code> property</p>
+   <p>Operation configurations are received on <code>msg.firestore</code> property with the following properties:</p>
+   <dl class="message-properties">
+        <dt>
+          operation <span class="property-type">string</span>
+        </dt>
+        <dd>The write operation to perform, either <code>add</code>, <code>set</code> or <code>update</code></dd>
+
+        <dt>
+          collection <span class="property-type">string</span>
+        </dt>
+        <dd>The collection reference to write to</dd>
+
+        <dt class="optional">
+          document <span class="property-type">string</span>
+          </dt>
+        <dd>The document reference to write to</dd>
+    </dl>
+    <h4>Note: set and update operations require a document reference</h4>
+    <p>
+      Sample:
+      <pre>msg.firestore = {
+        collection: 'farm',
+        document: 'cows',
+        operation: 'update'
+      }</pre>
+    </p>
+    <h3>Performing update operations</h3>
+    <p>Due to the nature of firestores implementation, some actions need special handling.</p>
+    <h4>Handling arrays</h4>
+    <p>
+      To perform array updates you may need to wrap your elements in an <code>arrayUnion</code> property for array pushes <br>
+      whereas to remove, you will need to use <code>arrayRemove</code> as shown: <br>
+      <pre>msg.payload = {
+        animals: {
+          arrayUnion: "goats"
+        },
+        farmers: {
+          arrayRemove: {name: "John Doe"}
+        }
+      }</pre>
+      becomes:
+      <pre>{
+        animals: firestore.FieldValue.arrayUnion("goats"),
+        farmers: firestore.FieldValue.arrayRemove({name: "John Doe"})
+      }</pre>
+    </p>
+    <h4>Handling GeoPoints</h4>
+    <p>Properties within the received payload containing a <code>latitude</code> and <code>longitude</code> property will be
+     automatically converted to a <a href="https://firebase.google.com/docs/reference/admin/node/admin.firestore.GeoPoint">Firestore GeoPoint</a> as shown</p>
+     <pre>msg.payload = {
+      location: {
+        latitude: -1.232
+        longitude: 36.343
+      }
+     }</pre>
+     becomes:
+     <pre>{location: new firestore.GeoPoint(latitude, longitude)}</pre>
+</script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('Firestore out', { 
+    category: 'firebase',
+    defaults: {
+      name: {required: false},
+      collection: {required: true},
+      document: {required: false},
+      operation: {
+        required: true,
+        value: "set",
+        validate: function (val) {
+          return val === 'set' || val === 'add' || val === 'update'
+        }
+      },
+      admin: {type: "firebase admin", required: true}
+    },
+    color: "#f06e00",
+    inputs: 1,
+    outputs: 1,
+    icon: "bridge.png",
+    align: "right",
+    label: function () {
+      return this.name || `${this.operation} ${this.collection || 'operation'}`;
+    },
+    labelStyle: function () {
+      return (this.name || this.operation) ? "node_label_italic" : "";
+    }
+  });
+</script>
+
+
+
+
