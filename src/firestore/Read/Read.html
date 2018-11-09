@@ -66,13 +66,13 @@
       realtime: {required: false},
       admin: {type: "firebase admin", required: true}
     },
-    color: "#f06e00",
+    color: "#F3B567",
     inputs: 1,
     outputs: 1,
-    icon: "bridge.png",
+    icon: "file.png",
     align: "left",
     label: function () {
-      return this.name || `/${this.collection}` || "Firestore read";
+      return this.name || `${'/' + this.collection || "Firestore read"}`;
     },
     labelStyle: function () {
       return (`/${this.collection}`) ? "node_label_italic" : "";

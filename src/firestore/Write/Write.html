@@ -107,13 +107,13 @@
       },
       admin: {type: "firebase admin", required: true}
     },
-    color: "#f06e00",
+    color: "#F3B567",
     inputs: 1,
     outputs: 1,
-    icon: "bridge.png",
+    icon: "file.png",
     align: "right",
     label: function () {
-      return this.name || `${this.operation} ${this.collection || 'operation'}`;
+      return this.name || `${this.operation} ${this.collection || ''}`;
     },
     labelStyle: function () {
       return (this.name || this.operation) ? "node_label_italic" : "";
