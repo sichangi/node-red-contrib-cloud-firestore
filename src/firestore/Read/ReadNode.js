@@ -12,44 +12,61 @@ function FirestoreReadNode(config) {
   this.collection = config.collection
   this.document = config.document
   this.realtime = config.realtime
+  this.snapListener = null
+  // register a realtime listener on node init
+  if (this.realtime) this.main({}, this.node.send.bind(this.node), this.node.error.bind(this.node))
 }
 
-FirestoreReadNode.prototype.onInput = function (msg, send, errorCb, log) {
+FirestoreReadNode.prototype.main = function (msg = {}, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore : {}
-
+  const that = this
   const col = input.collection || this.collection
   const doc = input.document || this.document
-  // TODO: handle realtime reads
-  // const rt = input.realtime || this.realtime
 
+  const rt = input.realtime || this.realtime
   const dbRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col)
 
   this.node.status({fill: 'blue', shape: 'ring', text: 'Running'})
 
-  dbRef.get()
-      .then((snap) => {
-        if (!doc) { // get an entire collection
-          let docArray = {};
-          snap.forEach(function (doc) {
-            if (!doc.exists) return;
-            docArray[doc.id] = doc.data()
-          });
-          msg.payload = docArray
-        } else {
-          msg.payload = snap.data()
-        }
+  function snapHandler(snap) {
+    if (!doc) { // get an entire collection
+      let docArray = {};
+      snap.forEach(function (snapDoc) {
+        if (!snapDoc.exists) return;
+        docArray[snapDoc.id] = snapDoc.data()
+      });
+      msg.payload = docArray
+    } else {
+      msg.payload = snap.data()
+    }
+    that.node.status({fill: 'green', shape: 'dot', text: 'Complete'})
+    send(msg)
+  }
 
-        send(msg)
-        this.node.status({fill: 'green', shape: 'dot', text: 'Complete'})
-      })
-      .catch((err) => {
-        this.node.status({fill: 'red', shape: 'ring', text: 'Error'})
-        errorCb(err)
-      })
+  // remove existing one before registering another
+  this.unsubscribeListener()
+
+  if (!rt) {
+    dbRef.get()
+        .then((snap) => {
+          snapHandler(snap)
+        })
+        .catch((err) => {
+          errorCb(err)
+          this.node.status({fill: 'red', shape: 'ring', text: 'Error'})
+        })
+  } else {
+    this.snapListener = dbRef.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error))
+  }
 }
 
-FirestoreReadNode.prototype.onClose = function () {
+FirestoreReadNode.prototype.unsubscribeListener = function () {
+  if (typeof this.snapListener === "function") this.snapListener()
+}
 
+FirestoreReadNode.prototype.onClose = function (removed, done) {
+  this.unsubscribeListener()
+  done()
 }
 
 FirestoreReadNode.prototype.setStatusCallback = function (cb) {

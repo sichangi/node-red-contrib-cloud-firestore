@@ -27,7 +27,7 @@ module.exports = function (RED) {
 
     const firestoreReadNode = new FirestoreReadNode(node)
     node.on('input', msg => {
-      firestoreReadNode.onInput(msg, node.send.bind(node), node.error.bind(node), node.log.bind(node))
+      firestoreReadNode.main(msg, node.send.bind(node), node.error.bind(node))
     })
 
     node.on('close', firestoreReadNode.onClose)
