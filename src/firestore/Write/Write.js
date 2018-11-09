@@ -32,7 +32,7 @@ module.exports = function(RED) {
     firestoreWriteNode.setStatusCallback(node.status.bind(node))
 
     node.on('input', msg => {
-      firestoreWriteNode.onInput(msg, node.send.bind(node), node.error.bind(node), node.log.bind(node), node)
+      firestoreWriteNode.onInput(msg, node.send.bind(node), node.error.bind(node), node)
     })
   }
 
