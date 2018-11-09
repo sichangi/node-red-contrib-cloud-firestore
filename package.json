@@ -5,6 +5,7 @@
     "test": "mocha"
   },
   "keywords": [
+    "firestore",
     "firebase",
     "node",
     "node-red"
