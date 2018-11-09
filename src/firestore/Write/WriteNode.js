@@ -1,4 +1,4 @@
-function FirestoreOutNode(config) {
+function FirestoreWriteNode(config) {
   if (!config.admin) {
     throw "No firebase admin specified";
   }
@@ -18,11 +18,11 @@ function FirestoreOutNode(config) {
   this.document = config.document
 }
 
-FirestoreOutNode.prototype.validateOperation = function ({operation: op, document}) {
+FirestoreWriteNode.prototype.validateOperation = function ({operation: op, document}) {
   if ((op === 'set' || op === 'update') && !document) throw `Operation ${op} requires a document reference`
 }
 
-FirestoreOutNode.prototype.onInput = function (msg, send, errorCb, debug, node) {
+FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb, debug, node) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {}
 
   const col = input.collection || this.collection
@@ -78,7 +78,7 @@ function traverse(object, func) {
  * Prepares array operations and GeoLocation references
  * @param load
  */
-FirestoreOutNode.prototype.preparePayload = function (load) {
+FirestoreWriteNode.prototype.preparePayload = function (load) {
   const traverseGeoPoints = (object) => {
     traverse(object, (obj, key) => {
       if (obj[key].hasOwnProperty('latitude') && obj[key].hasOwnProperty('longitude')) {
@@ -108,8 +108,8 @@ FirestoreOutNode.prototype.preparePayload = function (load) {
   return load
 }
 
-FirestoreOutNode.prototype.setStatusCallback = function (cb) {
+FirestoreWriteNode.prototype.setStatusCallback = function (cb) {
   this.onStatus = cb;
 }
 
-module.exports = FirestoreOutNode
+module.exports = FirestoreWriteNode

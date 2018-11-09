@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="Firestore out">
+<script type="text/x-red" data-template-name="Firestore write">
   <div class="firestore">
     <div class="form-row">
       <label for="node-input-admin"><i class="fa fa-cogs"></i> Admin</label>
@@ -27,7 +27,7 @@
 </div>
 </script>
 
-<script type="text/x-red" data-help-name="Firestore out">
+<script type="text/x-red" data-help-name="Firestore write">
    <p>This node performs write operations to the referenced collection or document</p>
    <h3>Inputs</h3>
    <p>Data is received on the <code>msg.payload</code> property</p>
@@ -92,7 +92,7 @@
 
 <script type="text/javascript">
 
-  RED.nodes.registerType('Firestore out', { 
+  RED.nodes.registerType('Firestore write', {
     category: 'firebase',
     defaults: {
       name: {required: false},

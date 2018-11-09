@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="Firestore in">
+<script type="text/x-red" data-template-name="Firestore read">
 <div class="firestore">
     <div class="form-row">
       <label for="node-input-admin"><i class="fa fa-cogs"></i> Admin </label>
@@ -23,7 +23,7 @@
   </div>
 </script>
 
-<script type="text/x-red" data-help-name="Firestore in">
+<script type="text/x-red" data-help-name="Firestore read">
     <p>The node fetches data from a referenced collection or referenced document</p>
     <h3>Inputs</h3>
     <p>Received on the <code>msg.firestore</code> property</p>
@@ -57,7 +57,7 @@
 </script>
 
 <script type="text/javascript">
-  RED.nodes.registerType('Firestore in', {
+  RED.nodes.registerType('Firestore read', {
     category: 'firebase',
     defaults: {
       name: {required: false},
@@ -72,7 +72,7 @@
     icon: "bridge.png",
     align: "left",
     label: function () {
-      return this.name || `/${this.collection}` || "Firestore in";
+      return this.name || `/${this.collection}` || "Firestore read";
     },
     labelStyle: function () {
       return (`/${this.collection}`) ? "node_label_italic" : "";

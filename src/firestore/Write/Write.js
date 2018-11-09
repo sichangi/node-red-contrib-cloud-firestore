@@ -1,4 +1,4 @@
-const FirestoreOutNode = require('./OutNode');
+const FirestoreWriteNode = require('./WriteNode');
 
 function validateNodeConfig(n){
   if (!n.collection){
@@ -17,7 +17,7 @@ function validateNodeConfig(n){
 module.exports = function(RED) {
   "use strict";
 
-  function FirestoreOut(n) {
+  function FirestoreWrite(n) {
     validateNodeConfig(n)
 
     RED.nodes.createNode(this,n);
@@ -28,15 +28,15 @@ module.exports = function(RED) {
     node.operation = n.operation;
     node.admin = RED.nodes.getNode(n.admin);
 
-    const firebaseOutNode = new FirestoreOutNode(node)
-    firebaseOutNode.setStatusCallback(node.status.bind(node))
+    const firestoreWriteNode = new FirestoreWriteNode(node)
+    firestoreWriteNode.setStatusCallback(node.status.bind(node))
 
     node.on('input', msg => {
-      firebaseOutNode.onInput(msg, node.send.bind(node), node.error.bind(node), node.log.bind(node), node)
+      firestoreWriteNode.onInput(msg, node.send.bind(node), node.error.bind(node), node.log.bind(node), node)
     })
   }
 
-  RED.nodes.registerType("Firestore out", FirestoreOut);
+  RED.nodes.registerType("Firestore write", FirestoreWrite);
 }
 
 

@@ -1,4 +1,4 @@
-function FirestoreInNode(config) {
+function FirestoreReadNode(config) {
   this.node = config
   if (!config.admin) {
     throw "No firebase admin specified";
@@ -14,7 +14,7 @@ function FirestoreInNode(config) {
   this.realtime = config.realtime
 }
 
-FirestoreInNode.prototype.onInput = function (msg, send, errorCb, log) {
+FirestoreReadNode.prototype.onInput = function (msg, send, errorCb, log) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore : {}
 
   const col = input.collection || this.collection
@@ -48,12 +48,12 @@ FirestoreInNode.prototype.onInput = function (msg, send, errorCb, log) {
       })
 }
 
-FirestoreInNode.prototype.onClose = function () {
+FirestoreReadNode.prototype.onClose = function () {
 
 }
 
-FirestoreInNode.prototype.setStatusCallback = function (cb) {
+FirestoreReadNode.prototype.setStatusCallback = function (cb) {
   this.onStatus = cb;
 };
 
-module.exports = FirestoreInNode
+module.exports = FirestoreReadNode

@@ -1,4 +1,4 @@
-const FireStoreInNode = require('./InNode');
+const FirestoreReadNode = require('./ReadNode');
 
 function validateNodeConfig(n) {
   if (!n.collection) {
@@ -13,7 +13,7 @@ function validateNodeConfig(n) {
 module.exports = function (RED) {
   "use strict";
 
-  function FireStoreIn(n) {
+  function FirestoreRead(n) {
     validateNodeConfig(n)
 
     RED.nodes.createNode(this, n);
@@ -25,17 +25,17 @@ module.exports = function (RED) {
     node.dataAtStart = n.dataAtStart;
     node.admin = RED.nodes.getNode(n.admin);
 
-    const firestoreInNode = new FireStoreInNode(node)
+    const firestoreReadNode = new FirestoreReadNode(node)
     node.on('input', msg => {
-      firestoreInNode.onInput(msg, node.send.bind(node), node.error.bind(node), node.log.bind(node))
+      firestoreReadNode.onInput(msg, node.send.bind(node), node.error.bind(node), node.log.bind(node))
     })
 
-    node.on('close', firestoreInNode.onClose)
+    node.on('close', firestoreReadNode.onClose)
 
-    firestoreInNode.setStatusCallback(node.status.bind(node))
+    firestoreReadNode.setStatusCallback(node.status.bind(node))
   }
 
-  RED.nodes.registerType("Firestore in", FireStoreIn);
+  RED.nodes.registerType("Firestore read", FirestoreRead);
 }
 
 
