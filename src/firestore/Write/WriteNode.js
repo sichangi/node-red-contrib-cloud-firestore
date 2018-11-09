@@ -1,4 +1,5 @@
 function FirestoreWriteNode(config) {
+  this.node = config
   if (!config.admin) {
     throw "No firebase admin specified";
   }
@@ -29,16 +30,16 @@ FirestoreWriteNode.prototype.validateOperation = function ({operation: op, docum
   if ((op === 'set' || op === 'update') && !document) throw `Operation ${op} requires a document reference`
 }
 
-FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb, node) {
+FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {}
-
+  const that = this
   const col = input.collection || this.collection
   const doc = input.document || this.document
   const op = input.operation || this.operation
   const payload = this.preparePayload(msg.payload)
 
   this.validateOperation({operation: op, document: doc})
-  node.status({fill: 'blue', shape: 'ring', text: 'Running'})
+  this.node.status({fill: 'blue', shape: 'ring', text: 'Running'})
 
   switch (op) {
     case 'add':
@@ -59,12 +60,12 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb, node) {
   function handleSuccess(result) {
     msg.payload = result
     send(msg)
-    node.status({fill: 'green', shape: 'dot', text: 'Complete'})
+    that.node.status({fill: 'green', shape: 'dot', text: 'Complete'})
   }
 
   function handleFailure(err) {
     errorCb(err)
-    node.status({fill: 'red', shape: 'ring', text: 'Error'})
+    that.node.status({fill: 'red', shape: 'ring', text: 'Error'})
   }
 }
 
