@@ -36,7 +36,7 @@ module.exports = function(RED) {
     })
   }
 
-  RED.nodes.registerType("Firestore write", FirestoreWrite);
+  RED.nodes.registerType("Firestore out", FirestoreWrite);
 }
 
 

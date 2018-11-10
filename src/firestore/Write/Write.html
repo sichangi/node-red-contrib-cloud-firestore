@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="Firestore write">
+<script type="text/x-red" data-template-name="Firestore out">
   <div class="firestore">
     <div class="form-row">
       <label for="node-input-admin"><i class="fa fa-cogs"></i> Admin</label>
@@ -27,7 +27,7 @@
 </div>
 </script>
 
-<script type="text/x-red" data-help-name="Firestore write">
+<script type="text/x-red" data-help-name="Firestore out">
    <p>This node performs write operations to the referenced collection or document</p>
    <h3>Inputs</h3>
    <p>Data is received on the <code>msg.payload</code> property</p>
@@ -61,38 +61,31 @@
     <p>Due to the nature of firestores implementation, some actions need special handling.</p>
     <h4>Handling arrays</h4>
     <p>
-      To perform array updates you may need to wrap your elements in an <code>arrayUnion</code> property for array pushes <br>
-      whereas to remove, you will need to use <code>arrayRemove</code> as shown: <br>
-      <pre>msg.payload = {
-        animals: {
-          arrayUnion: "goats"
-        },
-        farmers: {
-          arrayRemove: {name: "John Doe"}
-        }
-      }</pre>
+      To perform array updates you may need to wrap your elements anywhere within the payload in an object with an <code>_arrayUnion</code> property for array pushes <br>
+      whereas to remove, you will need to use <code>_arrayRemove</code> as shown: <br>
+      <pre>{animals: {_arrayUnion: "goats"},
+      farmers: {_arrayRemove: {name: "John Doe"}}}</pre>
       becomes:
-      <pre>{
-        animals: firestore.FieldValue.arrayUnion("goats"),
-        farmers: firestore.FieldValue.arrayRemove({name: "John Doe"})
-      }</pre>
+      <pre>{animals: firestore.FieldValue.arrayUnion("goats"),
+        farmers: firestore.FieldValue.arrayRemove({name: "John Doe"})}</pre>
     </p>
     <h4>Handling GeoPoints</h4>
     <p>Properties within the received payload containing a <code>latitude</code> and <code>longitude</code> property will be
      automatically converted to a <a href="https://firebase.google.com/docs/reference/admin/node/admin.firestore.GeoPoint">Firestore GeoPoint</a> as shown</p>
-     <pre>msg.payload = {
-      location: {
-        latitude: -1.232
-        longitude: 36.343
-      }
-     }</pre>
+     <pre>{location: {_lat: -1.232,_lng: 36.343}}</pre>
      becomes:
-     <pre>{location: new firestore.GeoPoint(latitude, longitude)}</pre>
+     <pre>{location: new firestore.GeoPoint(_lat, _lng)}</pre>
+    <h4>Delete</h4>
+    <p>Properties with the <code>_delete</code> string value will be replaced with the appropriate <a href="https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.delete">delete</a> sentinel
+      <pre>{unwantedField: '_delete'}</pre>
+      becomes:
+      <pre>{unwantedField: firestore.FieldValue.delete()}</pre>
+    </p>
 </script>
 
 <script type="text/javascript">
 
-  RED.nodes.registerType('Firestore write', {
+  RED.nodes.registerType('Firestore out', {
     category: 'firebase',
     defaults: {
       name: {required: false},
@@ -113,7 +106,7 @@
     icon: "file.png",
     align: "right",
     label: function () {
-      return this.name || `${this.operation} ${this.collection || ''}`;
+      return this.name || this.collection ? `${this.operation} ${this.collection}` : null || "Firestore Write"
     },
     labelStyle: function () {
       return (this.name || this.operation) ? "node_label_italic" : "";
