@@ -1,5 +1,4 @@
 function FirestoreReadNode(config) {
-  this.node = config
   if (!config.admin) {
     throw "No firebase admin specified";
 
@@ -14,19 +13,17 @@ function FirestoreReadNode(config) {
   this.realtime = config.realtime
   this.snapListener = null
   // register a realtime listener on node init
-  if (this.realtime) this.main({}, this.node.send.bind(this.node), this.node.error.bind(this.node))
+  if (this.realtime) this.main({}, config.send.bind(config), config.error.bind(config))
 }
 
-FirestoreReadNode.prototype.main = function (msg = {}, send, errorCb) {
+FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore : {}
-  const that = this
+
   const col = input.collection || this.collection
   const doc = input.document || this.document
 
   const rt = input.realtime || this.realtime
   const dbRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col)
-
-  this.node.status({fill: 'blue', shape: 'ring', text: 'Running'})
 
   function snapHandler(snap) {
     if (!doc) { // get an entire collection
@@ -39,7 +36,6 @@ FirestoreReadNode.prototype.main = function (msg = {}, send, errorCb) {
     } else {
       msg.payload = snap.data()
     }
-    that.node.status({fill: 'green', shape: 'dot', text: 'Complete'})
     send(msg)
   }
 
@@ -50,7 +46,6 @@ FirestoreReadNode.prototype.main = function (msg = {}, send, errorCb) {
         })
         .catch((err) => {
           errorCb(err)
-          this.node.status({fill: 'red', shape: 'ring', text: 'Error'})
         })
   } else {
     // remove existing one before registering another

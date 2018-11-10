@@ -1,5 +1,4 @@
 function FirestoreWriteNode(config) {
-  this.node = config
   if (!config.admin) {
     throw "No firebase admin specified";
   }
@@ -32,14 +31,12 @@ FirestoreWriteNode.prototype.validateOperation = function ({operation: op, docum
 
 FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {}
-  const that = this
   const col = input.collection || this.collection
   const doc = input.document || this.document
   const op = input.operation || this.operation
   const payload = this.preparePayload(msg.payload)
 
   this.validateOperation({operation: op, document: doc})
-  this.node.status({fill: 'blue', shape: 'ring', text: 'Running'})
 
   switch (op) {
     case 'add':
@@ -60,12 +57,10 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   function handleSuccess(result) {
     msg.payload = result
     send(msg)
-    that.node.status({fill: 'green', shape: 'dot', text: 'Complete'})
   }
 
   function handleFailure(err) {
     errorCb(err)
-    that.node.status({fill: 'red', shape: 'ring', text: 'Error'})
   }
 }
 
