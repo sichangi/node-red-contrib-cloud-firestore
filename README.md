@@ -38,14 +38,14 @@ Due to the nature of Cloud firestores implementation, some actions need special 
 **Arrays**
 
 To perform [array updates](https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array), you'll 
-need to wrap your elements in an ``arrayUnion`` or ``arrayRemove`` property respectively to add or remove elements from an array
+need to wrap your elements in an object with the ``_arrayUnion`` or ``_arrayRemove`` property respectively to add or remove elements from an array
 ```
 msg.payload = {
     animals: {
-        arrayUnion: 'goats'
+        _arrayUnion: 'goats'
     },
     farmers: {
-        arrayRemove: {name: "John Doe"}
+        _arrayRemove: {name: "John Doe"}
     }
 }
 ```
