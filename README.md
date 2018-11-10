@@ -31,7 +31,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
 - ``collection``: [string] collection or subCollection reference to write to
 - ``document``: [string] document reference to write to (optional for ``add`` operations) 
 
-Handling Firestore Classes
+Handling Firestore Classes & sentinels
 -----
 Due to the nature of Cloud firestores implementation, some actions need special handling.
 
