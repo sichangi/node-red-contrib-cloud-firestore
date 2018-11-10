@@ -8,7 +8,7 @@ Install
 -------
 Install from [npm](http://npmjs.org)
 ```
-npm install node-red-contrib-cloud-firestore
+npm install --save node-red-contrib-cloud-firestore
 ```
 
 Usage
