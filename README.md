@@ -1,18 +1,15 @@
-node-red-contrib-cloud-firestore
-------------
+# node-red-contrib-cloud-firestore
 
 [Node-RED](http://nodered.org) nodes to handle google cloud firestore read and write operations
 
  
-Install
--------
+## Install
 Install from [npm](http://npmjs.org)
 ```
 npm install --save node-red-contrib-cloud-firestore
 ```
 
-Usage
------
+## Usage
 **Firestore Read**
 
 Node fetches data from a referenced collection, subcollection or document.
@@ -31,8 +28,8 @@ Configurations made from within the node or on the ``msg.firestore`` property:
 - ``collection``: [string] collection or subCollection reference to write to
 - ``document``: [string] document reference to write to (optional for ``add`` operations) 
 
-Handling Firestore Classes & sentinels
------
+## Handling Firestore Classes & sentinels
+
 Due to the nature of Cloud firestores implementation, some actions need special handling.
 
 **Arrays**
