@@ -43,9 +43,6 @@ FirestoreReadNode.prototype.main = function (msg = {}, send, errorCb) {
     send(msg)
   }
 
-  // remove existing one before registering another
-  this.unsubscribeListener()
-
   if (!rt) {
     dbRef.get()
         .then((snap) => {
@@ -56,15 +53,17 @@ FirestoreReadNode.prototype.main = function (msg = {}, send, errorCb) {
           this.node.status({fill: 'red', shape: 'ring', text: 'Error'})
         })
   } else {
+    // remove existing one before registering another
+    this.unsubscribeListener()
     this.snapListener = dbRef.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error))
   }
 }
 
 FirestoreReadNode.prototype.unsubscribeListener = function () {
-  if (typeof this.snapListener === "function") this.snapListener()
+  if (Object.prototype.toString.call(this.snapListener) === "[object Function]") this.snapListener()
 }
 
-FirestoreReadNode.prototype.onClose = function (removed, done) {
+FirestoreReadNode.prototype.onClose = function (done) {
   this.unsubscribeListener()
   done()
 }

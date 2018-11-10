@@ -30,7 +30,7 @@ module.exports = function (RED) {
       firestoreReadNode.main(msg, node.send.bind(node), node.error.bind(node))
     })
 
-    node.on('close', firestoreReadNode.onClose)
+    node.on('close', firestoreReadNode.onClose.bind(firestoreReadNode))
 
     firestoreReadNode.setStatusCallback(node.status.bind(node))
   }
