@@ -5,6 +5,15 @@
   "scripts": {
     "test": "mocha"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sichangi/node-red-contrib-cloud-firestore.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sichangi/node-red-contrib-cloud-firestore/issues"
+  },
+  "author": "Mecolela Sichangi",
+  "homepage": "https://github.com/Sichangi/node-red-contrib-cloud-firestore#readme",
   "keywords": [
     "firestore",
     "firebase",
