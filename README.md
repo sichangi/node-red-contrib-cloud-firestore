@@ -1,6 +1,6 @@
 # node-red-contrib-cloud-firestore
 
-[Node-RED](http://nodered.org) nodes to handle google cloud firestore read and write operations
+Node-RED nodes to handle google cloud firestore read and write operations
 
  
 ## Install
@@ -35,7 +35,7 @@ Due to the nature of Cloud firestores implementation, some actions need special 
 **Arrays**
 
 To perform [array updates](https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array), you'll 
-need to wrap your elements in an object with the ``_arrayUnion`` or ``_arrayRemove`` property respectively to add or remove elements from an array
+need to wrap your elements in an object with the ``_arrayUnion`` or ``_arrayRemove`` property to add or remove elements respectively within an array
 ```
 msg.payload = {
     animals: {
@@ -120,3 +120,8 @@ becomes:
     unwantedField: firestore.FieldValue.delete()
 }
 ```
+
+## TODO
+
+- facilitate order and limiting functionality
+- handle simple and compound queries
