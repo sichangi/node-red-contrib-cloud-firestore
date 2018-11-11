@@ -39,6 +39,9 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
     send(msg)
   }
 
+// remove existing one before registering another
+  this.unsubscribeListener()
+
   if (!rt) {
     dbRef.get()
         .then((snap) => {
@@ -48,8 +51,6 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
           errorCb(err)
         })
   } else {
-    // remove existing one before registering another
-    this.unsubscribeListener()
     this.snapListener = dbRef.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error))
   }
 }
