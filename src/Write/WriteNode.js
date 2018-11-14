@@ -1,3 +1,5 @@
+const {traverse} = require('../utils')
+
 function FirestoreWriteNode(config) {
   if (!config.admin) {
     throw "No firebase admin specified";
@@ -61,21 +63,6 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
 
   function handleFailure(err) {
     errorCb(err)
-  }
-}
-
-function traverse(object, func) {
-  const whatIs = Object.prototype.toString.call(object)
-  if (whatIs === '[object Object]') {
-    for (let key in object) {
-      func(object, key)
-      traverse(object[key], func)
-    }
-  } else if (whatIs === '[object Array]') {
-    object.forEach((val, index) => {
-      func(object, index)
-      traverse(val, func)
-    })
   }
 }
 
