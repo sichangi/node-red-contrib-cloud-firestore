@@ -123,5 +123,6 @@ becomes:
 
 ## TODO
 
-- facilitate order and limiting functionality
-- handle simple and compound queries
+- Add in node query configuration for read node
+- Document on how to perform queries through node input
+- Facilitate chained / compound 'where' queries
