@@ -1,3 +1,5 @@
+const {traverse} = require('../utils')
+
 function FirestoreReadNode(config) {
   if (!config.admin) {
     throw "No firebase admin specified";
@@ -23,7 +25,25 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const doc = input.document || this.document
 
   const rt = input.realtime || this.realtime
-  const dbRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col)
+  const query = input.query || this.query || {}
+
+  const baseRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col)
+  const referenceQuery = doc ? baseRef : this.prepareQuery(baseRef, query)
+
+// remove existing one before registering another
+  this.unsubscribeListener()
+
+  if (!rt) {
+    referenceQuery.get()
+        .then((snap) => {
+          snapHandler(snap)
+        })
+        .catch((err) => {
+          errorCb(err)
+        })
+  } else {
+    this.snapListener = referenceQuery.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error))
+  }
 
   function snapHandler(snap) {
     if (!doc) { // get an entire collection
@@ -38,21 +58,35 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
     }
     send(msg)
   }
+}
 
-// remove existing one before registering another
-  this.unsubscribeListener()
+FirestoreReadNode.prototype.prepareQuery = function (baseRef, queryObj) {
+  // Handle order specific queries, where orderBy comes before where or vice-versa
+  Object.keys(queryObj).forEach((key) => {
+    switch (key) {
+      case 'where':
+        if (queryObj[key].length === 3) {
+          baseRef = baseRef.where(...queryObj.where)
+        }
+        break;
+      case 'orderBy':
+        traverse(queryObj, (obj, key) => {
+          if (key === 'orderBy' && obj[key].hasOwnProperty('field')) {
+            baseRef = obj[key].direction ?
+                baseRef.orderBy(obj[key].field, obj[key].direction)
+                : baseRef = baseRef.orderBy(obj[key].field)
+          }
+        })
+        break;
+    }
+  })
 
-  if (!rt) {
-    dbRef.get()
-        .then((snap) => {
-          snapHandler(snap)
-        })
-        .catch((err) => {
-          errorCb(err)
-        })
-  } else {
-    this.snapListener = dbRef.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error))
+  // always ensure limit is last
+  if (queryObj.hasOwnProperty('limit') && queryObj.limit) {
+    baseRef = baseRef.limit(queryObj.limit)
   }
+
+  return baseRef
 }
 
 FirestoreReadNode.prototype.unsubscribeListener = function () {
