@@ -3,12 +3,12 @@ const {traverse} = require('../utils')
 function FirestoreReadNode(config) {
   if (!config.admin) {
     throw "No firebase admin specified";
-
   }
+
   if (!config.collection) {
     throw 'FireStore collection Not Present';
-
   }
+
   this.firestore = config.admin.firestore
   this.collection = config.collection
   this.document = config.document

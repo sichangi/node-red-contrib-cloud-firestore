@@ -1,5 +1,5 @@
 /**
- * Traverses Objects and or Arrays applying specified conditions through a function to it
+ * Traverses Objects and or Arrays applying specified conditions through a function
  * @param object [Object | Array] - Object under traversal
  * @param func [Function] - function applying effects to an objects property
  */
