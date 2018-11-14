@@ -26,8 +26,8 @@
   "node-red": {
     "nodes": {
       "firebaseAdmin": "src/admin/firebaseAdmin.js",
-      "firestoreRead": "src/firestore/Read/Read.js",
-      "firestoreWrite": "src/firestore/Write/Write.js"
+      "firestoreIn": "src/Read/Read.js",
+      "firestoreOut": "src/Write/Write.js"
     }
   },
   "devDependencies": {

@@ -89,7 +89,11 @@ FirestoreWriteNode.prototype.preparePayload = function (load) {
       obj[key] = this.firebase.firestore.FieldValue.serverTimestamp()
     }
 
-    if (obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lat) && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lng)) {
+    if (obj[key] === this.ReplaceMap.delete) {
+      obj[key] = this.firebase.firestore.FieldValue.delete()
+    }
+
+    if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lat) && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lng)) {
       let lat = obj[key]._lat
       let lng = obj[key]._lng
       obj[key] = new this.firebase.firestore.GeoPoint(lat, lng)
@@ -98,12 +102,10 @@ FirestoreWriteNode.prototype.preparePayload = function (load) {
 
   // Replace ArrayUnions and ArrayRemovals after other values are set
   traverse(load, (obj, key) => {
-    if (obj[key].hasOwnProperty(this.ReplaceMap.arrayUnion)) {
+    if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.arrayUnion)) {
       obj[key] = this.firebase.firestore.FieldValue.arrayUnion(obj[key][this.ReplaceMap.arrayUnion])
-    } else if (obj[key].hasOwnProperty(this.ReplaceMap.arrayRemove)) {
+    } else if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.arrayRemove)) {
       obj[key] = this.firebase.firestore.FieldValue.arrayRemove(obj[key][this.ReplaceMap.arrayRemove])
-    } else if (obj[key] === this.ReplaceMap.delete) {
-      obj[key] = this.firebase.firestore.FieldValue.delete()
     }
   })
 

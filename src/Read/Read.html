@@ -72,10 +72,10 @@
     icon: "file.png",
     align: "left",
     label: function () {
-      return this.name || this.collection ? this.collection : null || "Firestore read";
+      return this.name || this.collection || "Firestore read";
     },
     labelStyle: function () {
-      return (this.collection) ? "node_label_italic" : "";
+      return (this.collection && !this.name) ? "node_label_italic" : "";
     }
   });
 </script>

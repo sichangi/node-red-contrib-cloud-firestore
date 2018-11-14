@@ -20,7 +20,7 @@ module.exports = function (RED) {
     var node = this;
 
     node.collection = n.collection;
-    node.doc = n.document || '';
+    node.document = n.document || '';
     node.realtime = n.realtime || false;
     node.dataAtStart = n.dataAtStart;
     node.admin = RED.nodes.getNode(n.admin);
