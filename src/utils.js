@@ -1,10 +1,14 @@
+function objectTypeOf(object) {
+  return Object.prototype.toString.call(object)
+}
+
 /**
  * Traverses Objects and or Arrays applying specified conditions through a function
  * @param object [Object | Array] - Object under traversal
  * @param func [Function] - function applying effects to an objects property
  */
 function traverse(object, func) {
-  const whatIs = Object.prototype.toString.call(object)
+  const whatIs = objectTypeOf(object)
   if (whatIs === '[object Object]') {
     for (let key in object) {
       func(object, key)
@@ -19,5 +23,6 @@ function traverse(object, func) {
 }
 
 module.exports = {
-  traverse
+  traverse,
+  objectTypeOf
 }
