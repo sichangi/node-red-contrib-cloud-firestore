@@ -74,7 +74,7 @@ FirestoreReadNode.prototype.prepareQuery = function (baseRef, queryObj) {
           if (key === 'orderBy' && obj[key].hasOwnProperty('field')) {
             baseRef = obj[key].direction ?
                 baseRef.orderBy(obj[key].field, obj[key].direction)
-                : baseRef = baseRef.orderBy(obj[key].field)
+                : baseRef.orderBy(obj[key].field)
           }
         })
         break;
