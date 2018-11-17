@@ -11,8 +11,10 @@ function traverse(object, func) {
   const whatIs = objectTypeOf(object)
   if (whatIs === '[object Object]') {
     for (let key in object) {
-      func(object, key)
-      traverse(object[key], func)
+      if (object.hasOwnProperty(key)) {
+        func(object, key)
+        traverse(object[key], func)
+      }
     }
   } else if (whatIs === '[object Array]') {
     object.forEach((val, index) => {
