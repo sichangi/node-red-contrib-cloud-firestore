@@ -5,19 +5,19 @@ function FirebaseAdminNode(config) {
     throw 'Service Account Json Not Present';
   }
 
-  this.app = firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert(config.serviceAccountJson),
-    databaseURL: `https://${config.serviceAccountJson.project_id}.firebaseio.com`,
-    projectId: config.serviceAccountJson.project_id,
-  });
+  if (!firebaseAdmin.apps.length) {
+    firebaseAdmin.initializeApp({
+      credential: firebaseAdmin.credential.cert(config.serviceAccountJson),
+      databaseURL: `https://${config.serviceAccountJson.project_id}.firebaseio.com`,
+      projectId: config.serviceAccountJson.project_id,
+    })
 
-
-  this.core = firebaseAdmin;
-  this.database = firebaseAdmin.database();
-  this.firestore = firebaseAdmin.firestore();
-  this.messaging = firebaseAdmin.messaging();
-
-  this.firestore.settings({timestampsInSnapshots: true})
+    this.core = firebaseAdmin;
+    this.firestore = firebaseAdmin.firestore();
+    this.firestore.settings({timestampsInSnapshots: true})
+  } else {
+    firebaseAdmin.app()
+  }
 }
 
 FirebaseAdminNode.prototype.onClose = function (removed, done) {
