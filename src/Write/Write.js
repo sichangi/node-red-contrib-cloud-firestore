@@ -29,7 +29,6 @@ module.exports = function(RED) {
     node.admin = RED.nodes.getNode(n.admin);
 
     const firestoreWriteNode = new FirestoreWriteNode(node)
-    firestoreWriteNode.setStatusCallback(node.status.bind(node))
 
     node.on('input', msg => {
       firestoreWriteNode.onInput(msg, node.send.bind(node), node.error.bind(node), node)

@@ -99,8 +99,4 @@ FirestoreWriteNode.prototype.preparePayload = function (load) {
   return Object.assign({}, load)
 }
 
-FirestoreWriteNode.prototype.setStatusCallback = function (cb) {
-  this.onStatus = cb;
-}
-
 module.exports = FirestoreWriteNode

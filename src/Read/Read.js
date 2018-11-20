@@ -31,8 +31,6 @@ module.exports = function (RED) {
     })
 
     node.on('close', firestoreReadNode.onClose.bind(firestoreReadNode))
-
-    firestoreReadNode.setStatusCallback(node.status.bind(node))
   }
 
   RED.nodes.registerType("Firestore in", FirestoreRead);

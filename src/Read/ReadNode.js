@@ -98,8 +98,4 @@ FirestoreReadNode.prototype.onClose = function (done) {
   done()
 }
 
-FirestoreReadNode.prototype.setStatusCallback = function (cb) {
-  this.onStatus = cb;
-};
-
 module.exports = FirestoreReadNode
