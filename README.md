@@ -15,7 +15,7 @@ node-red-contrib-cloud-firestore
 ```
 
 ## Usage
-###Firestore Read
+### Firestore Read
 
 Node fetches data from a referenced collection, subcollection or document.
 Configurations can be made within the node or on the ``msg.firestore`` property:
@@ -77,7 +77,7 @@ with the query method as the only property and it's value being an array of argu
 => citiesRef.orderBy("population").startAt(100000).endAt(1000000)
 ```
 
-###Firestore Write
+### Firestore Write
 
 Node performs write operations to the referenced collection, subCollection or document.
 Configurations made from within the node or on the ``msg.firestore`` property:

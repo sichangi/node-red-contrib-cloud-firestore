@@ -21,7 +21,7 @@
     "node-red"
   ],
   "dependencies": {
-    "firebase-admin": "^6.1.0"
+    "firebase-admin": "^6.2.0"
   },
   "node-red": {
     "nodes": {
