@@ -6,21 +6,78 @@ Node-RED nodes to handle google cloud firestore read and write operations
 ## Install
 Install from [npm](http://npmjs.org)
 ```
-npm install --save node-red-contrib-cloud-firestore
+npm install node-red-contrib-cloud-firestore
+```
+
+Install from the palette manager
+```
+node-red-contrib-cloud-firestore
 ```
 
 ## Usage
-**Firestore Read**
+###Firestore Read
 
 Node fetches data from a referenced collection, subcollection or document.
 Configurations can be made within the node or on the ``msg.firestore`` property:
 - ``collection``: [string] The collection or subCollection in reference
 - ``document``: [string] The document reference under the defined collection
 - ``realtime``: [boolean] telling the node to listen for live updates or not (false by default)
+- ``query``: [array&lt;object&gt;] an array of objects defining query methods to apply to the read 
 
 Response data from the operation is output through the ``msg.payload`` property 
 
-**Firestore Write**
+#### Upstream input queries
+
+To perform dynamic queries with the read node through input, you need to supply an array of objects on the ``msg.firestore.query`` property in the order they will be chained 
+with the query method as the only property and it's value being an array of arguments, or a single string value as show below.
+
+```
+{
+    query : [
+        {where: ["state", "==", CA]},
+        {where: ["population", "<", 1000000]}
+    ]
+}
+
+=> citiesRef.where("state", "==", "CA").where("population", "<", 1000000)
+```
+
+```
+{
+    query : [
+        {orderBy: "name"},
+        {limit: 2}
+    ]
+}
+
+=> citiesRef.orderBy("name").limit(2)
+```
+
+```
+{
+    query : [
+        {where: ["population", ">", 100000]},
+        {orderBy: ["population", "asc"]},
+        {limit: 2}
+    ]
+}
+
+=> citiesRef.where("population", ">", 100000).orderBy("population").limit(2)
+```
+
+```
+{
+    query : [
+        {orderBy: "population"},
+        {startAt: 100000},
+        {endAt: 1000000}
+    ]
+}
+
+=> citiesRef.orderBy("population").startAt(100000).endAt(1000000)
+```
+
+###Firestore Write
 
 Node performs write operations to the referenced collection, subCollection or document.
 Configurations made from within the node or on the ``msg.firestore`` property:
@@ -28,7 +85,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
 - ``collection``: [string] collection or subCollection reference to write to
 - ``document``: [string] document reference to write to (optional for ``add`` operations) 
 
-## Handling Firestore Classes & sentinels
+#### Handling Firestore classes & sentinels
 
 Due to the nature of Cloud firestores implementation, some actions need special handling.
 
@@ -56,7 +113,7 @@ becomes:
 
 **GeoPoints**
 
-Objects within the payload received by the Write Node containing a ``_lat`` and ``_lng`` property will be replaced with the appropriate [GeoPoint](https://firebase.google.com/docs/reference/admin/node/admin.firestore.GeoPoint) constructor:
+Objects within the payload received by the Write Node containing a ``_lat`` and ``_lng`` property will be replaced with the appropriate [GeoPoint](https://firebase.google.com/docs/reference/admin/node/admin.firestore.GeoPoint) class
 
 ```
 {
@@ -89,7 +146,7 @@ becomes:
 
 **Server Timestamp**
 
-Properties with the ``_serverTimestamp`` string value will be replace with the appropriate sentinel [serverTimestamp](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.serverTimestamp):
+Properties with the ``_serverTimestamp`` string value will be replace with the appropriate [serverTimestamp](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.serverTimestamp) sentinel
 
 ```
 {
@@ -106,7 +163,7 @@ becomes:
 
 **Delete**
 
-Properties with the ``_delete`` string value will be replaced with the appropriate sentinel [delete](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.delete)  
+Properties with the ``_delete`` string value will be replaced with the appropriate [delete](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.delete) sentinel  
 
 ```
 {
@@ -123,6 +180,4 @@ becomes:
 
 ## TODO
 
-- Add in node query configuration for read node
-- Document on how to perform queries through node input
-- Facilitate chained / compound 'where' queries
+- Prepare automated tests

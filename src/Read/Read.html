@@ -46,6 +46,10 @@
           realtime <span class="property-type">boolean</span>
           </dt>
         <dd>If set, the node emits live data changes on the watched reference</dd>
+        <dt class="optional">
+          query <span class="property-type">array&lt;object&gt;</span>
+          </dt>
+        <dd>an array of objects defining query methods to apply to the read</dd>
     </dl>
     <p>
       The above inputs can also be set from within the
@@ -55,7 +59,8 @@
     <pre>msg.firestore = {
      collection: 'farm',
      document: 'cows',
-     realtime: true // false by default
+     realtime: true,
+     query: [{where: ["name", "==", "milky"]}]
     }</pre>
     </p>
     <h3>Outputs</h3>
