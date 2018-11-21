@@ -20,9 +20,9 @@ module.exports = function (RED) {
     var node = this;
 
     node.collection = n.collection;
-    node.document = n.document || '';
-    node.realtime = n.realtime || false;
-    node.dataAtStart = n.dataAtStart;
+    node.document = n.document;
+    node.realtime = n.realtime;
+    node.query = n.query;
     node.admin = RED.nodes.getNode(n.admin);
 
     const firestoreReadNode = new FirestoreReadNode(node)

@@ -8,15 +8,15 @@ function objectTypeOf(object) {
  * @param func [Function] - function applying effects to an objects property
  */
 function traverse(object, func) {
-  const whatIs = objectTypeOf(object)
-  if (whatIs === '[object Object]') {
+  const objectType = objectTypeOf(object)
+  if (objectType === '[object Object]') {
     for (let key in object) {
       if (object.hasOwnProperty(key)) {
         func(object, key)
         traverse(object[key], func)
       }
     }
-  } else if (whatIs === '[object Array]') {
+  } else if (objectType === '[object Array]') {
     object.forEach((val, index) => {
       func(object, index)
       traverse(val, func)
