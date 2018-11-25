@@ -28,7 +28,7 @@ function FirestoreWriteNode(config) {
 }
 
 FirestoreWriteNode.prototype.validateOperation = function ({operation: op, document}) {
-  if ((op === 'set' || op === 'update') && !document) throw `Operation ${op} requires a document reference`
+  if ((op === 'set' || op === 'update' || op === 'delete') && !document) throw `Operation ${op} requires a document reference`
 }
 
 FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
@@ -48,6 +48,7 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
       break;
     case 'set':
     case 'update':
+    case 'delete':
       this.firestore.collection(col).doc(doc)[op](payload)
           .then(handleSuccess)
           .catch(handleFailure)

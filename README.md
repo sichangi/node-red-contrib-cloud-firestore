@@ -81,7 +81,7 @@ with the query method as the only property and it's value being an array of argu
 
 Node performs write operations to the referenced collection, subCollection or document.
 Configurations made from within the node or on the ``msg.firestore`` property:
-- ``operation``: [string] Write operation to perform, either ``add``, ``set`` or ``update``
+- ``operation``: [string] Write operation to perform, either ``add``, ``set``, ``update`` or ``delete``
 - ``collection``: [string] collection or subCollection reference to write to
 - ``document``: [string] document reference to write to (optional for ``add`` operations) 
 

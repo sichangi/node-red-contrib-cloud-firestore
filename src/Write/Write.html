@@ -14,6 +14,7 @@
         <option value="set">Set</option>
         <option value="add">Add</option>
         <option value="update">Update</option>
+        <option value="delete">Delete</option>
       </select>
     </div>
     <div class="form-row">
@@ -36,7 +37,7 @@
         <dt>
           operation <span class="property-type">string</span>
         </dt>
-        <dd>The write operation to perform, either <code>add</code>, <code>set</code> or <code>update</code></dd>
+        <dd>The write operation to perform, either <code>add</code>, <code>set</code>, <code>update</code> or <code>delete</code></dd>
 
         <dt>
           collection <span class="property-type">string</span>
@@ -95,7 +96,7 @@
         required: true,
         value: "set",
         validate: function (val) {
-          return val === 'set' || val === 'add' || val === 'update'
+          return val === 'set' || val === 'add' || val === 'update' || val === 'delete'
         }
       },
       admin: {type: "firebase admin", required: true}
