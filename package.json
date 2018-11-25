@@ -18,7 +18,8 @@
     "firestore",
     "firebase",
     "node",
-    "node-red"
+    "node-red",
+    "google"
   ],
   "dependencies": {
     "firebase-admin": "^6.2.0"

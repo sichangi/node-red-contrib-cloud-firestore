@@ -34,7 +34,7 @@ with the query method as the only property and it's value being an array of argu
 ```
 {
     query : [
-        {where: ["state", "==", CA]},
+        {where: ["state", "==", "CA"]},
         {where: ["population", "<", 1000000]}
     ]
 }
@@ -62,7 +62,7 @@ with the query method as the only property and it's value being an array of argu
     ]
 }
 
-=> citiesRef.where("population", ">", 100000).orderBy("population").limit(2)
+=> citiesRef.where("population", ">", 100000).orderBy("population", "asc").limit(2)
 ```
 
 ```
@@ -181,3 +181,4 @@ becomes:
 ## TODO
 
 - Prepare automated tests
+- Handle transactions and batch writes
