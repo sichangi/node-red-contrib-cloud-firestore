@@ -321,7 +321,7 @@
             break;
           case 'limit':
           case 'offset':
-            q.limit = parseInt(numberFieldArgument)
+            q[method] = parseInt(numberFieldArgument)
             break;
         }
 
