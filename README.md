@@ -2,7 +2,6 @@
 
 Node-RED nodes to handle google cloud firestore read and write operations
 
- 
 ## Install
 Install from [npm](http://npmjs.org)
 ```
@@ -15,6 +14,9 @@ node-red-contrib-cloud-firestore
 ```
 
 ## Usage
+### Firestore admin
+Required configuration node that initializes your firebase app taking in a name and the json contents of your apps service account credentials.
+
 ### Firestore Read
 
 Node fetches data from a referenced collection, subcollection or document.
@@ -22,13 +24,13 @@ Configurations can be made within the node or on the ``msg.firestore`` property:
 - ``collection``: [string] The collection or subCollection in reference
 - ``document``: [string] The document reference under the defined collection
 - ``realtime``: [boolean] telling the node to listen for live updates or not (false by default)
-- ``query``: [array&lt;object&gt;] an array of objects defining query methods to apply to the read 
+- ``query``: [array&lt;object&gt;] an array of objects defining query methods to apply to the read
 
-Response data from the operation is output through the ``msg.payload`` property 
+Response data from the operation is output through the ``msg.payload`` property
 
 #### Upstream input queries
 
-To perform dynamic queries with the read node through input, you need to supply an array of objects on the ``msg.firestore.query`` property in the order they will be chained 
+To perform dynamic queries with the read node through input, you need to supply an array of objects on the ``msg.firestore.query`` property in the order they will be chained
 with the query method as the only property and it's value being an array of arguments, or a single string value as show below.
 
 ```
@@ -39,7 +41,7 @@ with the query method as the only property and it's value being an array of argu
     ]
 }
 
-=> citiesRef.where("state", "==", "CA").where("population", "<", 1000000)
+=> reference.where("state", "==", "CA").where("population", "<", 1000000)
 ```
 
 ```
@@ -50,7 +52,7 @@ with the query method as the only property and it's value being an array of argu
     ]
 }
 
-=> citiesRef.orderBy("name").limit(2)
+=> reference.orderBy("name").limit(2)
 ```
 
 ```
@@ -62,7 +64,7 @@ with the query method as the only property and it's value being an array of argu
     ]
 }
 
-=> citiesRef.where("population", ">", 100000).orderBy("population", "asc").limit(2)
+=> reference.where("population", ">", 100000).orderBy("population", "asc").limit(2)
 ```
 
 ```
@@ -74,7 +76,7 @@ with the query method as the only property and it's value being an array of argu
     ]
 }
 
-=> citiesRef.orderBy("population").startAt(100000).endAt(1000000)
+=> reference.orderBy("population").startAt(100000).endAt(1000000)
 ```
 
 ### Firestore Write
@@ -83,7 +85,7 @@ Node performs write operations to the referenced collection, subCollection or do
 Configurations made from within the node or on the ``msg.firestore`` property:
 - ``operation``: [string] Write operation to perform, either ``add``, ``set``, ``update`` or ``delete``
 - ``collection``: [string] collection or subCollection reference to write to
-- ``document``: [string] document reference to write to (optional for ``add`` operations) 
+- ``document``: [string] document reference to write to (optional for ``add`` operations)
 
 #### Handling Firestore classes & sentinels
 
@@ -91,7 +93,7 @@ Due to the nature of Cloud firestores implementation, some actions need special 
 
 **Arrays**
 
-To perform [array updates](https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array), you'll 
+To perform [array updates](https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array), you'll
 need to wrap your elements in an object with the ``_arrayUnion`` or ``_arrayRemove`` property to add or remove elements respectively within an array
 ```
 msg.payload = {
@@ -130,7 +132,7 @@ Objects within the payload received by the Write Node containing a ``_lat`` and 
   }
 }
 ```
-becomes: 
+becomes:
 ```
 {
     farm: {
@@ -150,11 +152,11 @@ Properties with the ``_serverTimestamp`` string value will be replace with the a
 
 ```
 {
-    time: '_serverTimestamp' 
+    time: '_serverTimestamp'
 }
 ```
 
-becomes: 
+becomes:
 ```
 {
     time: firestore.FieldValue.serverTimestamp()
@@ -163,15 +165,15 @@ becomes:
 
 **Delete**
 
-Properties with the ``_delete`` string value will be replaced with the appropriate [delete](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.delete) sentinel  
+Properties with the ``_delete`` string value will be replaced with the appropriate [delete](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.delete) sentinel
 
 ```
 {
-    unwantedField: '_delete' 
+    unwantedField: '_delete'
 }
 ```
 
-becomes: 
+becomes:
 ```
 {
     unwantedField: firestore.FieldValue.delete()
