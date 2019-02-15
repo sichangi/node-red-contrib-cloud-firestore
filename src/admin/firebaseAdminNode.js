@@ -14,7 +14,6 @@ function FirebaseAdminNode(config) {
 
     this.core = firebaseAdmin;
     this.firestore = firebaseAdmin.firestore();
-    this.firestore.settings({timestampsInSnapshots: true})
   } else {
     firebaseAdmin.app()
   }

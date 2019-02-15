@@ -3,7 +3,7 @@
 Node-RED nodes to handle google cloud firestore read and write operations
 
 ## Install
-Install from [npm](http://npmjs.org)
+Install from [npm](https://www.npmjs.com/package/node-red-contrib-cloud-firestore)
 ```
 npm install node-red-contrib-cloud-firestore
 ```
