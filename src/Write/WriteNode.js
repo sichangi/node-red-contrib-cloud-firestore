@@ -82,8 +82,8 @@ FirestoreWriteNode.prototype.preparePayload = function (load) {
     }
 
     if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lat) && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lng)) {
-      let lat = obj[key]._lat
-      let lng = obj[key]._lng
+      let lat = obj[key][this.ReplaceMap.GeoPoint.lat]
+      let lng = obj[key][this.ReplaceMap.GeoPoint.lng]
       obj[key] = new this.firebase.firestore.GeoPoint(lat, lng)
     }
   })
