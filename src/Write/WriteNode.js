@@ -17,6 +17,7 @@ function FirestoreWriteNode(config) {
   this.firestore = config.admin.firestore
   this.collection = config.collection
   this.operation = config.operation
+  this.options = config.options
   this.document = config.document
   this.ReplaceMap = {
     delete: '_delete',
@@ -36,6 +37,7 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   const col = input.collection || this.collection
   const doc = input.document || this.document
   const op = input.operation || this.operation
+  const opts = input.options || this.options
   const payload = this.preparePayload(msg.payload)
 
   this.validateOperation({operation: op, document: doc})
@@ -49,7 +51,7 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
     case 'set':
     case 'update':
     case 'delete':
-      this.firestore.collection(col).doc(doc)[op](payload)
+      this.firestore.collection(col).doc(doc)[op](payload, opts)
           .then(handleSuccess)
           .catch(handleFailure)
       break;
