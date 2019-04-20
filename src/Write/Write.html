@@ -107,7 +107,7 @@
     icon: "file.png",
     align: "right",
     label: function () {
-      return this.name || `${this.operation} ${this.collection}`
+      return this.name || this.collection && this.operation? `${this.operation} ${this.collection}` : null || 'Firestore Write'
     },
     labelStyle: function () {
       return (this.collection && !this.name) ? "node_label_italic" : "";
