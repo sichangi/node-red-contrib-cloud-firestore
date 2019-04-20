@@ -89,6 +89,8 @@ Configurations made from within the node or on the ``msg.firestore`` property:
 - ``operation``: [string] Write operation to perform, either ``add``, ``set``, ``update`` or ``delete``
 - ``collection``: [string] collection or subCollection reference to write to
 - ``document``: [string] document reference to write to (optional for ``add`` operations)
+- ``options``: [object] additional options passed to firebase (currently
+  specific to ``set`` operations)
 
 #### Handling Firestore classes & sentinels
 
