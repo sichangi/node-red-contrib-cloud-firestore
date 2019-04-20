@@ -14,8 +14,11 @@ node-red-contrib-cloud-firestore
 ```
 
 ## Usage
-### Firestore admin
-Required configuration node that initializes your firebase app taking in a name and the json contents of your apps service account credentials.
+### Admin configuration
+A configuration property under either Read or Write nodes that
+initializes a firebase app taking in a name and the json contents of
+your apps service account credentials which can be generated under
+``Project settings > service accounts > Firebase Admin SDK``.
 
 ### Firestore Read
 
