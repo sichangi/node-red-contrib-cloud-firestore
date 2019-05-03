@@ -50,6 +50,10 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
       break;
     case 'set':
     case 'update':
+      this.firestore.collection(col).doc(doc).update(payload)
+          .then(handleSuccess)
+          .catch(handleFailure)
+      break;
     case 'delete':
       this.firestore.collection(col).doc(doc)[op](payload, opts)
           .then(handleSuccess)
