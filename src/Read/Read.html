@@ -21,6 +21,10 @@
       <input type="checkbox" id="node-input-realtime">
     </div>
     <div class="form-row">
+      <label for="node-input-group"><i class="fa fa-archive"></i> Group</label>
+      <input type="checkbox" id="node-input-group">
+    </div>
+    <div class="form-row">
         <label><i class="fa fa-search"></i> Query</label>
     </div>
     <div class="node-input-query-container-row">
@@ -46,6 +50,10 @@
           realtime <span class="property-type">boolean</span>
           </dt>
         <dd>If set, the node emits live data changes on the watched reference</dd>
+        <dt class="optional">
+          group <span class="property-type">boolean</span>
+          </dt>
+        <dd>If set, the query will be run against a collection group
         <dt class="optional">
           query <span class="property-type">array&lt;object&gt;</span>
           </dt>
@@ -94,6 +102,7 @@
     defaults: {
       name: {required: false},
       collection: {value: '', required: true},
+      group: {value: false},
       document: {value: ''},
       realtime: {value: false},
       query: {value: []},
