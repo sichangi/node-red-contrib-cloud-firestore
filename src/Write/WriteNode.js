@@ -45,16 +45,20 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   switch (op) {
     case 'add':
       this.firestore.collection(col).add(payload)
-          .then(handleSuccess)
-          .catch(handleFailure)
-      break;
+        .then(handleSuccess)
+        .catch(handleFailure)
+      break
     case 'set':
+      this.firestore.collection(col).doc(doc)[op](payload, opts)
+        .then(handleSuccess)
+        .catch(handleFailure)
+      break
     case 'update':
     case 'delete':
-      this.firestore.collection(col).doc(doc)[op](payload, opts)
-          .then(handleSuccess)
-          .catch(handleFailure)
-      break;
+      this.firestore.collection(col).doc(doc)[op](payload)
+        .then(handleSuccess)
+        .catch(handleFailure)
+      break
     default:
       handleFailure(`Invalid operation given: ${op}`)
   }
