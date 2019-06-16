@@ -2,11 +2,11 @@ const {objectTypeOf} = require('../utils')
 
 function FirestoreReadNode(config) {
   if (!config.admin) {
-    throw "No firebase admin specified";
+    throw 'No firebase admin specified'
   }
 
   if (!config.collection) {
-    throw 'FireStore collection Not Present';
+    throw 'FireStore collection Not Present'
   }
 
   this.firestore = config.admin.firestore
@@ -29,11 +29,10 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const rt = input.realtime || this.realtime
   const query = input.query || this.query
 
-  if(doc && group)
-    throw 'Cannot set document ref in a collection group query'
+  if (doc && group) throw 'Cannot set document ref in a collection group query'
 
-  let baseRef, referenceQuery;
-  if(group) {
+  let baseRef, referenceQuery
+  if (group) {
     baseRef = this.firestore.collectionGroup(col)
     referenceQuery = this.prepareQuery(baseRef, query)
   } else {
@@ -41,28 +40,24 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
     referenceQuery = doc ? baseRef : this.prepareQuery(baseRef, query)
   }
 
-// remove existing one before registering another
+  // remove existing listener before registering another
   this.unsubscribeListener()
 
   if (!rt) {
     referenceQuery.get()
-        .then((snap) => {
-          snapHandler(snap)
-        })
-        .catch((err) => {
-          errorCb(err)
-        })
+      .then((snap) => snapHandler(snap))
+      .catch((err) => errorCb(err))
   } else {
     this.snapListener = referenceQuery.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error))
   }
 
   function snapHandler(snap) {
     if (!doc) { // get an entire collection
-      let docArray = {};
+      let docArray = {}
       snap.forEach(function (snapDoc) {
-        if (!snapDoc.exists) return;
+        if (!snapDoc.exists) return
         docArray[snapDoc.id] = snapDoc.data()
-      });
+      })
       msg.payload = docArray
     } else {
       msg.payload = snap.data()
@@ -76,9 +71,9 @@ FirestoreReadNode.prototype.prepareQuery = function (baseRef, queryObj) {
     const key = Object.keys(condition)[0]
 
     let value = condition[key]
-    let isString = objectTypeOf(value) === "[object String]"
-    let isArray = objectTypeOf(value) === "[object Array]"
-    let isObject = objectTypeOf(value) === "[object Object]"
+    let isString = objectTypeOf(value) === '[object String]'
+    let isArray = objectTypeOf(value) === '[object Array]'
+    let isObject = objectTypeOf(value) === '[object Object]'
 
     switch (key) {
       case 'where':
@@ -89,7 +84,7 @@ FirestoreReadNode.prototype.prepareQuery = function (baseRef, queryObj) {
         } else if (isObject) {
           baseRef = baseRef.where(value.field, value.operation, value.value)
         }
-        break;
+        break
       case 'orderBy':
         if (isString) {
           baseRef = baseRef.orderBy(value)
@@ -97,20 +92,20 @@ FirestoreReadNode.prototype.prepareQuery = function (baseRef, queryObj) {
           baseRef = baseRef.orderBy(...value)
         } else if (isObject) {
           baseRef = !!value.direction ?
-              baseRef.orderBy(value.field, value.direction)
-              : baseRef.orderBy(value.field)
+            baseRef.orderBy(value.field, value.direction)
+            : baseRef.orderBy(value.field)
         }
-        break;
+        break
       case 'startAt':
       case 'endAt':
       case 'startAfter':
       case 'endBefore':
         baseRef = isArray ? baseRef[key](...value) : baseRef[key](value)
-        break;
+        break
       case 'limit':
       case 'offset':
         baseRef = baseRef[key](value)
-        break;
+        break
     }
   })
 
@@ -118,7 +113,7 @@ FirestoreReadNode.prototype.prepareQuery = function (baseRef, queryObj) {
 }
 
 FirestoreReadNode.prototype.unsubscribeListener = function () {
-  if (objectTypeOf(this.snapListener) === "[object Function]") this.snapListener()
+  if (objectTypeOf(this.snapListener) === '[object Function]') this.snapListener()
 }
 
 FirestoreReadNode.prototype.onClose = function (done) {

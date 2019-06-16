@@ -27,6 +27,7 @@ Configurations can be made within the node or on the ``msg.firestore`` property:
 - ``collection``: [string] The collection or subCollection in reference
 - ``document``: [string] The document reference under the defined collection
 - ``realtime``: [boolean] telling the node to listen for live updates or not (false by default)
+- ``group``: [boolean] fetch all documents under collections with the above supplied collection name (false by default)
 - ``query``: [array&lt;object&gt;] an array of objects defining query methods to apply to the read
 
 Response data from the operation is output through the ``msg.payload`` property

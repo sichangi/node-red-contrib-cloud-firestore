@@ -21,7 +21,7 @@
       <input type="checkbox" id="node-input-realtime">
     </div>
     <div class="form-row">
-      <label for="node-input-group"><i class="fa fa-archive"></i> Group</label>
+      <label for="node-input-group"><i class="fa fa-sort"></i> Group</label>
       <input type="checkbox" id="node-input-group">
     </div>
     <div class="form-row">
@@ -53,7 +53,7 @@
         <dt class="optional">
           group <span class="property-type">boolean</span>
           </dt>
-        <dd>If set, the query will be run against a collection group
+        <dd>If set, the query will be run against a collection group (may require indexing)
         <dt class="optional">
           query <span class="property-type">array&lt;object&gt;</span>
           </dt>
@@ -68,6 +68,7 @@
      collection: 'farm',
      document: 'cows',
      realtime: true,
+     group: false,
      query: [{where: ["name", "==", "milky"]}]
     }</pre>
     </p>
