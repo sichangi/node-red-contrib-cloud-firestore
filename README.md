@@ -186,6 +186,22 @@ becomes:
 }
 ```
 
+## Extensibility & further uses
+
+Both the read & write nodes expose a ``firebase`` object adjacent to the
+payload object that contains the current app instance and a reference 
+to the firebase admin sdk, which allows you to extend the node to your liking.
+ 
+The Read node adds an additional ``query`` field that references the last run firebase query
+ 
+ ```
+  {
+    "app": "...", => current firebase instance
+    "admin": "...", => firebase admin sdk
+    "query": "..." => [Read node specific] last run query to the database
+  }
+ ```
+
 ## TODO
 
 - Prepare automated tests

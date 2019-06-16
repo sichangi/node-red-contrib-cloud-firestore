@@ -11,7 +11,8 @@ function FirebaseAdminNode(config) {
     projectId: config.serviceAccountJson.project_id
   }, config.serviceAccountJson.project_id)
 
-  this.core = app
+  this.app = app
+  this.core = firebaseAdmin
   this.firestore = app.firestore()
 }
 

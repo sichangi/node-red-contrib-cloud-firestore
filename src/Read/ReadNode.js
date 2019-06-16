@@ -9,6 +9,8 @@ function FirestoreReadNode(config) {
     throw 'FireStore collection Not Present'
   }
 
+  this.instance = config.admin.app
+  this.firebase = config.admin.firebase
   this.firestore = config.admin.firestore
   this.collection = config.collection
   this.group = config.group
@@ -22,6 +24,7 @@ function FirestoreReadNode(config) {
 
 FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore : {}
+  msg.firebase = {app: this.instance, admin: this.firebase}
 
   const col = input.collection || this.collection
   const group = input.group || this.group
@@ -62,6 +65,7 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
     } else {
       msg.payload = snap.data()
     }
+    msg.firebase.query = referenceQuery
     send(msg)
   }
 }

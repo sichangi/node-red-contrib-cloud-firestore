@@ -2,18 +2,19 @@ const {traverse} = require('../utils')
 
 function FirestoreWriteNode(config) {
   if (!config.admin) {
-    throw "No firebase admin specified";
+    throw 'No firebase admin specified'
   }
 
   if (!config.operation) {
-    throw 'FireStore write operation NOT Present';
+    throw 'FireStore write operation NOT Present'
   }
 
   if (!config.collection) {
-    throw 'FireStore collection reference NOT defined';
+    throw 'FireStore collection reference NOT defined'
   }
 
-  this.firebase = config.admin.core
+  this.instance = config.admin.app
+  this.firebase = config.admin.firebase
   this.firestore = config.admin.firestore
   this.collection = config.collection
   this.operation = config.operation
@@ -34,6 +35,8 @@ FirestoreWriteNode.prototype.validateOperation = function ({operation: op, docum
 
 FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {}
+  msg.firebase = {app: this.instance, admin: this.firebase}
+
   const col = input.collection || this.collection
   const doc = input.document || this.document
   const op = input.operation || this.operation
@@ -42,31 +45,29 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
 
   this.validateOperation({operation: op, document: doc})
 
+  let referenceQuery = null
+
   switch (op) {
     case 'add':
-      this.firestore.collection(col).add(payload)
-        .then(handleSuccess)
-        .catch(handleFailure)
+      referenceQuery = this.firestore.collection(col).add(payload)
       break
     case 'set':
-      this.firestore.collection(col).doc(doc)[op](payload, opts)
-        .then(handleSuccess)
-        .catch(handleFailure)
+      referenceQuery = this.firestore.collection(col).doc(doc).set(payload, opts)
       break
     case 'update':
     case 'delete':
-      this.firestore.collection(col).doc(doc)[op](payload)
-        .then(handleSuccess)
-        .catch(handleFailure)
+      referenceQuery = this.firestore.collection(col).doc(doc)[op](payload)
       break
     default:
-      handleFailure(`Invalid operation given: ${op}`)
+      return handleFailure(`Invalid operation given: ${op}`)
   }
 
-  function handleSuccess(result) {
-    msg.payload = result
-    send(msg)
-  }
+  referenceQuery
+    .then((result) => {
+      msg.payload = result
+      send(msg)
+    })
+    .catch(handleFailure)
 
   function handleFailure(err) {
     errorCb(err)
