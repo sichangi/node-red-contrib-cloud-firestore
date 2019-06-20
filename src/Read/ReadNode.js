@@ -13,6 +13,7 @@ function FirestoreReadNode(config) {
   this.firebase = config.admin.firebase
   this.firestore = config.admin.firestore
   this.collection = config.collection
+  this.subcollection = config.subcollection
   this.group = config.group
   this.document = config.document
   this.realtime = config.realtime
@@ -28,15 +29,21 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
 
   const col = input.collection || this.collection
   const group = input.group || this.group
+  const subcollection = input.subcollection || this.subcollection
   const doc = input.document || this.document
   const rt = input.realtime || this.realtime
   const query = input.query || this.query
 
   if (doc && group) throw 'Cannot set document ref in a collection group query'
+  if(subcollection && !doc) throw 'A document ID must be set to query a subcollection'
+  if(subcollection && group) throw 'Cannot perform a group query on a subcollection'
 
   let baseRef, referenceQuery
   if (group) {
     baseRef = this.firestore.collectionGroup(col)
+    referenceQuery = this.prepareQuery(baseRef, query)
+  } else if(subcollection) {
+    baseRef = this.firestore.collection(col).doc(doc).collection(subcollection)
     referenceQuery = this.prepareQuery(baseRef, query)
   } else {
     baseRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col)

@@ -21,6 +21,7 @@ module.exports = function (RED) {
 
     node.collection = n.collection;
     node.group = n.group;
+    node.subcollection = n.subcollection
     node.document = n.document;
     node.realtime = n.realtime;
     node.query = n.query;

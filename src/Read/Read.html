@@ -13,6 +13,10 @@
       <input type="text" id="node-input-collection">
     </div>
     <div class="form-row">
+      <label for="node-input-subcollection"><i class="fa fa-archive"></i> Subcollection </label>
+      <input type="text" id="node-input-subcollection">
+    </div>
+    <div class="form-row">
       <label for="node-input-document"><i class="fa fa-file"></i> Document </label>
       <input type="text" id="node-input-document" placeholder="doc name">
     </div>
@@ -104,6 +108,7 @@
       name: {required: false},
       collection: {value: '', required: true},
       group: {value: false},
+      subcollection: {required: false, value: false},
       document: {value: ''},
       realtime: {value: false},
       query: {value: []},
