@@ -31,6 +31,7 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const doc = input.document || this.document
   const rt = input.realtime || this.realtime
   const query = input.query || this.query
+  const handler = input.handler || this.defaultHandler;
 
   if (doc && group) throw 'Cannot set document ref in a collection group query'
 
@@ -48,26 +49,25 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
 
   if (!rt) {
     referenceQuery.get()
-      .then((snap) => snapHandler(snap))
+      .then((snap) => {
+        msg.payload = handler(snap)
+        msg.firebase.query = referenceQuery
+        send(msg)
+      })
       .catch((err) => errorCb(err))
   } else {
     this.snapListener = referenceQuery.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error))
   }
+}
 
-  function snapHandler(snap) {
-    if (!doc) { // get an entire collection
-      let docArray = {}
-      snap.forEach(function (snapDoc) {
-        if (!snapDoc.exists) return
-        docArray[snapDoc.id] = snapDoc.data()
-      })
-      msg.payload = docArray
-    } else {
-      msg.payload = snap.data()
-    }
-    msg.firebase.query = referenceQuery
-    send(msg)
-  }
+FirestoreReadNode.prototype.defaultHandler = function (snap) {
+  if(snap.id) return snap.data();
+  let docArray = {}
+  snap.forEach(function (snapDoc) {
+    if (!snapDoc.exists) return
+    docArray[snapDoc.id] = snapDoc.data()
+  })
+  return docArray
 }
 
 FirestoreReadNode.prototype.prepareQuery = function (baseRef, queryObj) {
