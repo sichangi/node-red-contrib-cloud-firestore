@@ -59,7 +59,7 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
       referenceQuery = this.firestore.collection(col).doc(doc)[op](payload)
       break
     default:
-      return handleFailure(`Invalid operation given: ${op}`)
+      return handleFailure(`Invalid operation given: ${op}`, msg)
   }
 
   referenceQuery
@@ -67,10 +67,10 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
       msg.payload = result
       send(msg)
     })
-    .catch(handleFailure)
+    .catch((err) => handleFailure(err, msg));
 
-  function handleFailure(err) {
-    errorCb(err)
+  function handleFailure(err, msg) {
+    errorCb(err, msg);
   }
 }
 

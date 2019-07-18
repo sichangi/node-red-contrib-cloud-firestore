@@ -49,9 +49,9 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   if (!rt) {
     referenceQuery.get()
       .then((snap) => snapHandler(snap))
-      .catch((err) => errorCb(err))
+      .catch((err) => errorCb(err, msg))
   } else {
-    this.snapListener = referenceQuery.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error))
+    this.snapListener = referenceQuery.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error, msg))
   }
 
   function snapHandler(snap) {
