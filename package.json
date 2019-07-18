@@ -22,7 +22,7 @@
     "google"
   ],
   "dependencies": {
-    "firebase-admin": "^8.1.0"
+    "firebase-admin": "^8.2.0"
   },
   "node-red": {
     "nodes": {
