@@ -29,6 +29,7 @@ Configurations can be made within the node or on the ``msg.firestore`` property:
 - ``realtime``: [boolean] telling the node to listen for live updates or not (false by default)
 - ``group``: [boolean] fetch all documents under collections with the above supplied collection name (false by default)
 - ``query``: [array&lt;object&gt;] an array of objects defining query methods to apply to the read
+- ``disableHandler``: [boolean] disables the default snapshot handler, exposing a built query reference (false by default)
 
 Response data from the operation is output through the ``msg.payload`` property
 
@@ -188,17 +189,17 @@ becomes:
 
 ## Extensibility & further uses
 
-Both the read & write nodes expose a ``firebase`` object adjacent to the
+Both the read & write nodes expose a ``firestore`` object adjacent to the
 ``payload`` object that contains the current app instance and a reference 
 to the firebase admin sdk, which allows you to extend the node to your liking.
  
-The Read node adds an additional ``query`` field that references the last run query
+The Read node adds an additional ``query`` field that references a built query and only fi the ``disableHandler`` option is passed to it
  
  ```
   {
     "app": "...", => current firebase instance
     "admin": "...", => firebase admin sdk
-    "query": "..." => [Read node specific] last run query to the database
+    "query": "..." => [Read node specific] only if disableHandler option is passed to it
   }
  ```
 

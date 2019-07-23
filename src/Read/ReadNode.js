@@ -24,13 +24,14 @@ function FirestoreReadNode(config) {
 
 FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore : {}
-  msg.firebase = {app: this.instance, admin: this.firebase}
+  msg.firestore = {app: this.instance, admin: this.firebase}
 
   const col = input.collection || this.collection
   const group = input.group || this.group
   const doc = input.document || this.document
   const rt = input.realtime || this.realtime
   const query = input.query || this.query
+  const disable = input.disableHandler || false
 
   if (doc && group) throw 'Cannot set document ref in a collection group query'
 
@@ -45,6 +46,11 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
 
   // remove existing listener before registering another
   this.unsubscribeListener()
+
+  if (disable) {
+    msg.firestore.query = referenceQuery
+    return send(msg)
+  }
 
   if (!rt) {
     referenceQuery.get()
@@ -65,7 +71,6 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
     } else {
       msg.payload = snap.data()
     }
-    msg.firebase.query = referenceQuery
     send(msg)
   }
 }

@@ -35,7 +35,7 @@ FirestoreWriteNode.prototype.validateOperation = function ({operation: op, docum
 
 FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {}
-  msg.firebase = {app: this.instance, admin: this.firebase}
+  msg.firestore = {app: this.instance, admin: this.firebase}
 
   const col = input.collection || this.collection
   const doc = input.document || this.document
