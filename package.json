@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-cloud-firestore",
-  "version": "2.0.3",
+  "version": "2.1.1",
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,6 +15,7 @@
   "author": "Mecolela Sichangi",
   "homepage": "https://github.com/Sichangi/node-red-contrib-cloud-firestore#readme",
   "keywords": [
+    "cloud firestore",
     "firestore",
     "firebase",
     "node",
