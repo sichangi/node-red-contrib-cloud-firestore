@@ -31,6 +31,7 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const doc = input.document || this.document
   const rt = input.realtime || this.realtime
   const query = input.query || this.query
+  const disable = input.disableHandler || false
 
   if (doc && group) throw 'Cannot set document ref in a collection group query'
 
@@ -45,6 +46,11 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
 
   // remove existing listener before registering another
   this.unsubscribeListener()
+
+  if (disable) {
+    msg.payload = referenceQuery
+    return send(msg)
+  }
 
   if (!rt) {
     referenceQuery.get()
@@ -65,7 +71,6 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
     } else {
       msg.payload = snap.data()
     }
-    msg.firebase.query = referenceQuery
     send(msg)
   }
 }
