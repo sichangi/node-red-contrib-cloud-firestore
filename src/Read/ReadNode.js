@@ -24,7 +24,7 @@ function FirestoreReadNode(config) {
 
 FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore : {}
-  msg.firestore = {app: this.instance, admin: this.firebase}
+  msg.firebase = {app: this.instance, admin: this.firebase}
 
   const col = input.collection || this.collection
   const group = input.group || this.group
@@ -48,7 +48,7 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   this.unsubscribeListener()
 
   if (disable) {
-    msg.firestore.query = referenceQuery
+    msg.payload = referenceQuery
     return send(msg)
   }
 

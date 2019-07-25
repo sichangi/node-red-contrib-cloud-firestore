@@ -189,8 +189,7 @@ becomes:
 
 ## Extensibility & further uses
 
-Both the read & write nodes expose a ``firestore`` object adjacent to the
-``payload`` object that contains the current app instance and a reference 
+Both the read & write nodes expose a ``firebase`` object through the ``msg`` object that contains the current app instance and a reference 
 to the firebase admin sdk, which allows you to extend the node to your liking.
  
 The Read node adds an additional ``query`` field that references a built query and only if the ``disableHandler`` option is passed to it
