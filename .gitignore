@@ -1,6 +1,7 @@
 # User-specific stuff
 .idea/
 .vscode/
+.*.sw*
 
 # Logs
 logs

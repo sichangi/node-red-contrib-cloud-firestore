@@ -28,7 +28,13 @@ module.exports = function (RED) {
 
     const firestoreReadNode = new FirestoreReadNode(node)
     node.on('input', msg => {
+      node.status({fill:"blue",shape:"ring",text:"querying..."})
       firestoreReadNode.main(msg, node.send.bind(node), node.error.bind(node))
+      .then(() => this.status({fill:"green",shape:"dot",text:"success"}))
+      .catch((err) => {
+        this.status({fill:"red",shape:"dot",text:"error"})
+        node.error(err)
+      })
     })
 
     node.on('close', firestoreReadNode.onClose.bind(firestoreReadNode))
