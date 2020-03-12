@@ -54,7 +54,8 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
 
   if (disable) {
     msg.payload = referenceQuery
-    return send(msg)
+    send(msg)
+    return Promise.resolve()
   }
 
   function snapHandler(snap) {
