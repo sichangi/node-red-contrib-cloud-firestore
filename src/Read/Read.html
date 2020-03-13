@@ -93,6 +93,24 @@
     </p>
     <h3>Outputs</h3>
     Response data from the operation is output through the <code>msg.payload</code> property
+    <h3>Expert Zone</h3>
+    <p>In the expert zone, you can edit the default snap handle.</p>
+    <p>You'll have access to a <code>snap</code> and all the classic node object like <code>msg</code> or <code>send()</code>.</p>
+    <pre>
+snap.docChanges().forEach(change => {
+  if (change.type === 'added') {
+    console.log('Added: ', change.doc.data());
+  }
+  if (change.type === 'modified') {
+    console.log('Modified: ', change.doc.data());
+  }
+  if (change.type === 'removed') {
+    console.log('Removed: ', change.doc.data());
+  }
+});
+msg.payload = docs;
+send(msg);
+    </pre>
 </script>
 
 <style type="text/css">
@@ -372,7 +390,7 @@
       // Expert zone accordion
       $('.collapsible').accordion({
         collapsible: true,
-        active: false
+        active: $("#node-input-snapHandler").val() ? 0 : false
       });
     },
     oneditsave: function () {
