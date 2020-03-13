@@ -95,9 +95,11 @@
     Response data from the operation is output through the <code>msg.payload</code> property
     <h3>Expert Zone</h3>
     <p>In the expert zone, you can edit the default snap handle.</p>
-    <p>You'll have access to a <code>snap</code> and all the classic node object like <code>msg</code> or <code>send()</code>.</p>
+    <p>You'll have access to a <code>snap</code> object containing the query snapshot. What you <code>return</code> will then be send in the output payload.</p>
     <pre>
+const docs = [];
 snap.docChanges().forEach(change => {
+  docs.push(change.doc.data());
   if (change.type === 'added') {
     console.log('Added: ', change.doc.data());
   }
@@ -108,8 +110,7 @@ snap.docChanges().forEach(change => {
     console.log('Removed: ', change.doc.data());
   }
 });
-msg.payload = docs;
-send(msg);
+return docs;
     </pre>
 </script>
 

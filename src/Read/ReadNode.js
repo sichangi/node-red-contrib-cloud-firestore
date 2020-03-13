@@ -43,13 +43,17 @@ function FirestoreReadNode(config, RED) {
             },
     }
     const context = vm.createContext(sandbox)
-    const script = new vm.Script(config.snapHandler, {
-      filename: this.id+(this.name?' ['+this.name+']':''),
+    const script = new vm.Script(`(function(snap) {${config.snapHandler}})(snap)`, {
+      filename: this.id+(this.name?' ['+this.name+']':'')+'custom handler',
       displayErrors: true
     });
     this.snapHandler = (snap) => {
       context.snap = snap
-      return script.runInContext(context)
+      try {
+        return script.runInContext(context)
+      } catch(e) {
+        console.error(e);
+      }
     }
   } else {
     this.snapHandler = defaultSnapHandler
@@ -103,7 +107,11 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
         send(msg)
       })
   } else {
-    return this.snapListener = referenceQuery.onSnapshot((snap) => this.snapHandler(snap), (error) => errorCb(error, msg))
+    this.snapListener = referenceQuery.onSnapshot((snap) => {
+      msg.payload = this.snapHandler(snap)
+      send(msg)
+    }, (error) => errorCb(error, msg))
+    return Promise.resolve();
   }
 }
 
