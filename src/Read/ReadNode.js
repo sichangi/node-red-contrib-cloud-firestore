@@ -1,6 +1,21 @@
+const vm = require('vm')
+const util = require('util')
 const {objectTypeOf} = require('../utils')
 
-function FirestoreReadNode(config) {
+function defaultSnapHandler(snap) {
+  if (snap.size) { // get an entire collection
+    const documents = {}
+    snap.forEach(function (snapDoc) {
+      if (!snapDoc.exists) return
+      documents[snapDoc.id] = snapDoc.data()
+    })
+    return documents
+  } else {
+    return snap.data()
+  }
+}
+
+function FirestoreReadNode(config, RED) {
   if (!config.admin) {
     throw 'No firebase admin specified'
   }
@@ -17,6 +32,28 @@ function FirestoreReadNode(config) {
   this.document = config.document
   this.realtime = config.realtime
   this.query = config.query
+  if(config.snapHandler) {
+    const sandbox = {
+            console:console,
+            util: util,
+            Buffer:Buffer,
+            Date: Date,
+            RED: {
+                util: RED.util
+            },
+    }
+    const context = vm.createContext(sandbox)
+    const script = new vm.Script(config.snapHandler, {
+      filename: this.id+(this.name?' ['+this.name+']':''),
+      displayErrors: true
+    });
+    this.snapHandler = (snap) => {
+      context.snap = snap
+      return script.runInContext(context)
+    }
+  } else {
+    this.snapHandler = defaultSnapHandler
+  }
   this.snapListener = null
   this.status = config.status
   // register a realtime listener on node init
@@ -58,25 +95,15 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
     return Promise.resolve()
   }
 
-  function snapHandler(snap) {
-    if (!doc) { // get an entire collection
-      let docArray = {}
-      snap.forEach(function (snapDoc) {
-        if (!snapDoc.exists) return
-        docArray[snapDoc.id] = snapDoc.data()
-      })
-      msg.payload = docArray
-    } else {
-      msg.payload = snap.data()
-    }
-    send(msg)
-  }
-
   if (!rt) {
     return referenceQuery.get()
-      .then((snap) => snapHandler(snap))
+      .then((snap) => this.snapHandler(snap))
+      .then((result) => {
+        msg.payload = result
+        send(msg)
+      })
   } else {
-    return this.snapListener = referenceQuery.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error, msg))
+    return this.snapListener = referenceQuery.onSnapshot((snap) => this.snapHandler(snap), (error) => errorCb(error, msg))
   }
 }
 

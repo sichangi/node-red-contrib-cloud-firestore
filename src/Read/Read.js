@@ -24,9 +24,10 @@ module.exports = function (RED) {
     node.document = n.document;
     node.realtime = n.realtime;
     node.query = n.query;
+    node.snapHandler = n.snapHandler;
     node.admin = RED.nodes.getNode(n.admin);
 
-    const firestoreReadNode = new FirestoreReadNode(node)
+    const firestoreReadNode = new FirestoreReadNode(node, RED)
     node.on('input', msg => {
       node.status({fill:"blue",shape:"ring",text:"querying..."})
       firestoreReadNode.main(msg, node.send.bind(node), node.error.bind(node))
