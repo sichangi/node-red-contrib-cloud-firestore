@@ -10,7 +10,7 @@ function defaultSnapHandler(snap) {
       documents[snapDoc.id] = snapDoc.data()
     })
     return documents
-  } else {
+  } else if (snap.exists) {
     return snap.data()
   }
 }
@@ -66,7 +66,7 @@ function FirestoreReadNode(config, RED) {
 
 FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore : {}
-  msg.firebase = {app: this.instance, admin: this.firebase}
+  //msg.firebase = {app: this.instance, admin: this.firebase}
 
   const col = input.collection || this.collection
   const group = input.group || this.group
