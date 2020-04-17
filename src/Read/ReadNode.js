@@ -11,14 +11,13 @@ function FirestoreReadNode(config) {
 
   this.instance = config.admin.app
   this.firebase = config.admin.firebase
-  this.firestore = this.instance.firestore();
+  this.firestore = config.admin.firestore
   this.collection = config.collection
   this.group = config.group
   this.document = config.document
   this.realtime = config.realtime
   this.query = config.query
   this.snapListener = null
-  this.status = config.status
   // register a realtime listener on node init
   if (this.realtime) this.main({}, config.send.bind(config), config.error.bind(config))
 }
@@ -37,16 +36,12 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   if (doc && group) throw 'Cannot set document ref in a collection group query'
 
   let baseRef, referenceQuery
-  try {
-    if (group) {
-      baseRef = this.firestore.collectionGroup(col)
-      referenceQuery = this.prepareQuery(baseRef, query)
-    } else {
-      baseRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col)
-      referenceQuery = doc ? baseRef : this.prepareQuery(baseRef, query)
-    }
-  } catch(e) {
-    return Promise.reject(e);
+  if (group) {
+    baseRef = this.firestore.collectionGroup(col)
+    referenceQuery = this.prepareQuery(baseRef, query)
+  } else {
+    baseRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col)
+    referenceQuery = doc ? baseRef : this.prepareQuery(baseRef, query)
   }
 
   // remove existing listener before registering another
@@ -55,6 +50,14 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
   if (disable) {
     msg.payload = referenceQuery
     return send(msg)
+  }
+
+  if (!rt) {
+    referenceQuery.get()
+      .then((snap) => snapHandler(snap))
+      .catch((err) => errorCb(err, msg))
+  } else {
+    this.snapListener = referenceQuery.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error, msg))
   }
 
   function snapHandler(snap) {
@@ -69,13 +72,6 @@ FirestoreReadNode.prototype.main = function (msg, send, errorCb) {
       msg.payload = snap.data()
     }
     send(msg)
-  }
-
-  if (!rt) {
-    return referenceQuery.get()
-      .then((snap) => snapHandler(snap))
-  } else {
-    return this.snapListener = referenceQuery.onSnapshot((snap) => snapHandler(snap), (error) => errorCb(error, msg))
   }
 }
 
