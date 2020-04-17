@@ -15,7 +15,7 @@ function FirestoreWriteNode(config) {
 
   this.instance = config.admin.app
   this.firebase = config.admin.firebase
-  this.firestore = this.instance.firestore()
+  this.firestore = config.admin.firestore
   this.collection = config.collection
   this.operation = config.operation
   this.options = config.options

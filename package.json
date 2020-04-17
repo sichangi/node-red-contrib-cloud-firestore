@@ -22,11 +22,12 @@
     "node-red",
     "google"
   ],
-  "peerDependencies": {
-    "node-red-contrib-cloud-firebase-admin": "^1.0.0"
+  "dependencies": {
+    "firebase-admin": "^8.2.0"
   },
   "node-red": {
     "nodes": {
+      "firebaseAdmin": "src/admin/firebaseAdmin.js",
       "firestoreIn": "src/Read/Read.js",
       "firestoreOut": "src/Write/Write.js"
     }
