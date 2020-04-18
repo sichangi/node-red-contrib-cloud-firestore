@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-cloud-firestore",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0"
