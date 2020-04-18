@@ -102,9 +102,12 @@
     <p>The <code>snap</code> object contains the resulting query snapshot. What you <code>return</code> will then be sent in the output payload.</p>
     <p>For Example:</p>
     <pre>const docs = [];
+let added = context.flow.get('added');
+
 snap.docChanges().forEach(change => {
   docs.push(change.doc.data());
   if (change.type === 'added') {
+    added++;
     console.log('Added: ', change.doc.data());
   }
   if (change.type === 'modified') {
@@ -114,6 +117,8 @@ snap.docChanges().forEach(change => {
     console.log('Removed: ', change.doc.data());
   }
 });
+
+context.flow.set('added', added);
 return docs;</pre>
 <p>You can also save your snippets into the snippet library by giving it a file name and clicking the <code>Save to Library</code> button</p>
 </script>

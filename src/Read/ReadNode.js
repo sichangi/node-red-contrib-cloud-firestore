@@ -13,7 +13,7 @@ function FirestoreReadNode(config) {
 
   this.id = config.id;
   this.RED = config.RED;
-  this.context = config.context().flow;
+  this.context = config.context();
   this.instance = config.admin.app;
   this.firebase = config.admin.firebase;
   this.firestore = config.admin.firestore;
@@ -28,7 +28,7 @@ function FirestoreReadNode(config) {
   // register a realtime listener on node start
   if (this.realtime) {
     const msg = {firestore: {}};
-    const res = this.context.get(`$fst-input-${this.id}`);
+    const res = this.context.flow.get(`$fst-input-${this.id}`);
     msg.firestore = res || {};
     this.main(msg, config.send.bind(config), config.error.bind(config));
   }
@@ -60,7 +60,7 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
   if (rt) {
     // Save input to storage to better handle realtime recalls on node restarts
     try {
-      this.context.set(`$fst-input-${this.id}`, input);
+      this.context.flow.set(`$fst-input-${this.id}`, input);
     } catch (e) {
     }
   }

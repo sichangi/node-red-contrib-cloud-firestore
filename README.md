@@ -41,7 +41,7 @@ Response data from the operation is output through the ``msg.payload`` property
 #### Upstream input queries
 <details>
   <summary>Click to Expand</summary>
-  
+
   To perform dynamic queries with the read node through input, you need to supply an array of objects on the ``msg.firestore.query`` property in the order they will be chained
   with the query method as the only property and it's value being an array of arguments, or a single string value as show below.
   
@@ -106,10 +106,12 @@ Response data from the operation is output through the ``msg.payload`` property
   The following example returns an array of objects, while logging to the cmd console
   ```js
   const docs = [];
-  
+  let added = context.flow.get('added');
+
   snap.docChanges().forEach(change => {
     docs.push(change.doc.data());
     if (change.type === 'added') {
+      added++;
       console.log('Added: ', change.doc.data());
     }
     if (change.type === 'modified') {
@@ -119,7 +121,8 @@ Response data from the operation is output through the ``msg.payload`` property
       console.log('Removed: ', change.doc.data());
     }
   });
-  
+
+  context.flow.set('added', added);  
   return docs;
   ```
   
@@ -130,7 +133,7 @@ Response data from the operation is output through the ``msg.payload`` property
 #### Realtime edge cases
 <details>
   <summary>Click to Expand</summary>
-  
+
   If you intend on passing in dynamic configurations from an upstream node while still having realtime enabled, 
   the node will not have your upstream values recorded during the next restart. This could result in some unexpected
   outcomes.
@@ -156,7 +159,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
 #### Handling Firestore classes & sentinels
 <details>
   <summary>Click to Expand</summary>
-    
+
   Due to the nature of Cloud firestores implementation, some actions need special handling.
   
   **Arrays**
