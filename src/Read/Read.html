@@ -30,6 +30,23 @@
     <div class="node-input-query-container-row">
         <ol id="node-input-query-container"></ol>
     </div>
+    <hr/>
+    <div class="collapsible">
+      <div class="form-row-header">❗ Expert zone</div>
+      <div>
+        <div class="form-row">
+          <label style="margin-bottom: 0;" for="node-input-snapHandler" class="long"><i class="fa fa-wrench"></i> Snapshot handler</label>
+        </div>
+        <div class="form-row" style="grid-template-columns: 1.4fr 3fr .5fr;">
+          <label for="input-snap-name" style="width: 100%;">File Name (optional)</label>
+          <input type="text" id="input-snap-name">
+        </div>
+        <div id="node-text-editor-row" style="position:relative">
+          <div style="position: absolute; top: -100px; right:-30px; bottom:calc(100% + 3px);"><button id="node-function-expand-js" class="red-ui-button red-ui-button-small"><i class="fa fa-expand"></i></button></div>
+          <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-func-editor" ></div>
+        </div>
+      <div>
+    </div>
   </div>
 </script>
 
@@ -69,20 +86,54 @@
     <br>
     Sample <code>msg.firestore</code><br>
     <pre>msg.firestore = {
-     collection: 'farm',
-     document: 'cows',
-     realtime: true,
-     group: false,
-     query: [{where: ["name", "==", "milky"]}]
-    }</pre>
+   collection: 'farm',
+   document: 'cows',
+   realtime: true,
+   group: false,
+   query: [{where: ["name", "==", "milky"]}]
+}</pre>
     </p>
     <h3>Outputs</h3>
-     Response data from the operation is output through the <code>msg.payload</code> property
+    Response data from the operation is output through the <code>msg.payload</code> property
+    <h3>❗ Expert Zone</h3>
+    <p>In the expert zone, you can write your own snapshot handler. By leaving it empty, it resorts to using the default handler.</p>
+    <p>You'll contextually have access to the following objects: <code>config</code>(this nodes settings), <code>snap</code> (query snapshot), <code>util</code>(nodejs), <code>msg</code>, <code>context</code>, <code>RED.util</code> & <code>console</code>.
+    The <code>Promise</code>, <code>Buffer</code> and <code>Date</code> objects are also supported</p>
+    <p>The <code>snap</code> object contains the resulting query snapshot. What you <code>return</code> will then be sent in the output payload.</p>
+    <p>For Example:</p>
+    <pre>const docs = [];
+snap.docChanges().forEach(change => {
+  docs.push(change.doc.data());
+  if (change.type === 'added') {
+    console.log('Added: ', change.doc.data());
+  }
+  if (change.type === 'modified') {
+    console.log('Modified: ', change.doc.data());
+  }
+  if (change.type === 'removed') {
+    console.log('Removed: ', change.doc.data());
+  }
+});
+return docs;</pre>
+<p>You can also save your snippets into the snippet library by giving it a file name and clicking the <code>Save to Library</code> button</p>
 </script>
 
 <style type="text/css">
   .firestore .node-input-query-container-row {
     width: 100%;
+  }
+
+  .firestore .red-ui-editableList-container {
+    height: auto !important;
+    overflow-y: unset !important;
+  }
+
+  .firestore #input-snap-name {
+    width: 99% !important;
+  }
+
+  #admin-input.form-row div:first-of-type {
+    height: 34px !important;
   }
 
   #node-input-query-container .input-query-row {
@@ -99,6 +150,14 @@
   .input-query-row input, .input-query-row select {
     width: 100%;
   }
+
+  label[for="node-input-snapHandler"].long {
+    width: 150px;
+  }
+
+  #node-text-editor-row .form-row {
+    display: block;
+  }
 </style>
 
 <script type="text/javascript">
@@ -111,234 +170,314 @@
       document: {value: ''},
       realtime: {value: false},
       query: {value: []},
-      admin: {type: "firebase admin", required: true}
+      admin: {type: 'firebase admin', required: true},
+      snapHandler: {required: false}
     },
-    color: "#F3B567",
+    color: '#F3B567',
     inputs: 1,
     outputs: 1,
-    icon: "file.png",
-    align: "left",
+    icon: 'file.png',
+    align: 'left',
     label: function () {
-      return this.name || this.collection || "Firestore Read";
+      return this.name || this.collection || 'Firestore Read';
     },
     labelStyle: function () {
-      return (this.collection && !this.name) ? "node_label_italic" : "";
+      return (this.collection && !this.name) ? 'node_label_italic' : '';
     },
     oneditprepare: function () {
-      const listContainer = $('#node-input-query-container')
+      const listContainer = $('#node-input-query-container');
+      const node = this;
 
       listContainer
-          .css('min-height', '250px')
-          .css('min-width', '300px')
-          .editableList({
-            header: $("<div>").append($.parseHTML("<div style='width:28%; display: inline-grid'>Method</div><div style='display: inline-grid'>Arguments</div>")),
-            addItem(container, i, data) {
-              container.css({
-                overflow: 'hidden',
-                whiteSpace: 'nowrap'
-              });
+        .css('min-height', '250px')
+        .css('min-width', '300px')
+        .editableList({
+          header: $('<div>').append($.parseHTML('<div style=\'width:28%; display: inline-grid\'>Method</div><div style=\'display: inline-grid\'>Arguments</div>')),
+          addItem(container, i, data) {
+            container.css({
+              overflow: 'hidden',
+              whiteSpace: 'nowrap'
+            });
 
-              // query option item
-              let baseRow = $('<div/>', {class: 'input-query-row'}).appendTo(container);
+            // query option item
+            let baseRow = $('<div/>', {class: 'input-query-row'}).appendTo(container);
 
-              let methodSelect = $('<select/>', {
-                class: "node-input-query-method-type",
-                style: "margin-top:0;"
-              }).appendTo(baseRow);
+            let methodSelect = $('<select/>', {
+              class: 'node-input-query-method-type',
+              style: 'margin-top:0;'
+            }).appendTo(baseRow);
 
-              let methodOptions = ["where", "orderBy", "startAt", "endAt", "startAfter", "endBefore", "offset", "limit"]
+            let methodOptions = ['where', 'orderBy', 'startAt', 'endAt', 'startAfter', 'endBefore', 'offset', 'limit'];
 
-              for (let x = 0; x < methodOptions.length; x++) {
-                methodSelect.append($("<option></option>").val(methodOptions[x]).text(methodOptions[x]));
+            for (let x = 0; x < methodOptions.length; x++) {
+              methodSelect.append($('<option></option>').val(methodOptions[x]).text(methodOptions[x]));
+            }
+
+            // query field argument in text format
+            let textArgument = $('<input/>', {
+              class: 'node-input-query-text-field',
+              required: 'required',
+              type: 'text'
+            }).appendTo(baseRow);
+
+            // query field argument in numerical format
+            let numberArgument = $('<input/>', {
+              class: 'node-input-query-number-field',
+              required: 'required',
+              type: 'number'
+            }).appendTo(baseRow);
+
+            // direction string drop down option
+            let directionStrRow = $('<div/>', {class: 'input-query-row'}).appendTo(container);
+
+            $('<div/>', {class: 'input-query-label'}).text('direction').appendTo(directionStrRow);
+
+            let directionSelect = $('<select/>', {class: 'node-input-query-direction-select', type: 'text'})
+              .appendTo(directionStrRow);
+
+            let directionSelectOptions = [{v: null, l: 'none'}, {v: 'asc', l: 'ascending'}, {
+              v: 'desc',
+              l: 'descending'
+            }];
+
+            for (let x = 0; x < directionSelectOptions.length; x++) {
+              directionSelect.append($('<option></option>').val(directionSelectOptions[x].v).text(directionSelectOptions[x].l));
+            }
+
+            // operation dropdown option
+            let operationOptRow = $('<div/>', {class: 'input-query-row'}).appendTo(container);
+
+            $('<div/>', {class: 'input-query-label'}).text('operation').appendTo(operationOptRow);
+
+            let operationSelect = $('<select/>', {
+              class: 'node-input-query-operation-string'
+            }).appendTo(operationOptRow);
+
+            let operationOptions = ['<', '<=', '==', '>', '>=', 'array-contains'];
+
+            for (let x = 0; x < operationOptions.length; x++) {
+              operationSelect.append($('<option></option>').val(operationOptions[x]).text(operationOptions[x]));
+            }
+
+            // value field option
+            let valueFieldRow = $('<div/>', {class: 'input-query-row'}).appendTo(container);
+
+            $('<div/>', {class: 'input-query-label'}).text('value').appendTo(valueFieldRow);
+
+            let valueFieldInput = $('<input/>', {
+              class: 'node-input-query-value-field',
+              required: 'required',
+              type: 'text',
+              placeholder: 'value'
+            }).appendTo(valueFieldRow);
+
+            methodSelect.change(function () {
+              let type = $(this).val();
+              switch (type) {
+                case 'where':
+                  textArgument.show();
+                  valueFieldRow.show();
+                  operationOptRow.show();
+                  numberArgument.hide();
+                  directionStrRow.hide();
+                  break;
+                case 'orderBy':
+                  textArgument.show();
+                  directionStrRow.show();
+                  numberArgument.hide();
+                  operationOptRow.hide();
+                  valueFieldRow.hide();
+                  break;
+                case 'startAt':
+                case 'endAt':
+                case 'startAfter':
+                case 'endBefore':
+                  textArgument.show();
+                  numberArgument.hide();
+                  directionStrRow.hide();
+                  operationOptRow.hide();
+                  valueFieldRow.hide();
+                  break;
+                case 'offset':
+                case 'limit':
+                  numberArgument.show();
+                  textArgument.hide();
+                  directionStrRow.hide();
+                  operationOptRow.hide();
+                  valueFieldRow.hide();
+                  break;
+              }
+            });
+
+            const dataKeys = Object.keys(data);
+            if (dataKeys.length > 0) {
+              const method = dataKeys[0];
+              const value = data[method];
+
+              methodSelect.val(method);
+
+              switch (method) {
+                case 'where':
+                  textArgument.val(value.field);
+                  operationSelect.val(value.operation);
+                  valueFieldInput.val(value.value);
+                  break;
+                case 'orderBy':
+                  textArgument.val(value.field);
+                  directionSelect.val(value.direction);
+                  break;
+                case 'startAt':
+                case 'endAt':
+                case 'startAfter':
+                case 'endBefore':
+                  textArgument.val(value);
+                  break;
+                case 'limit':
+                case 'offset':
+                  numberArgument.val(value);
+                  break;
               }
 
-              // query field argument in text format
-              let textArgument = $('<input/>', {
-                class: "node-input-query-text-field",
-                required: "required",
-                type: "text"
-              }).appendTo(baseRow)
+              methodSelect.change();
+              textArgument.change();
+              numberArgument.change();
+              directionSelect.change();
+              operationSelect.change();
+            } else {
+              // Default method
+              methodSelect.val('orderBy').change();
+            }
+          },
+          removable: true,
+          sortable: true
+        });
 
-              // query field argument in numerical format
-              let numberArgument = $('<input/>', {
-                class: "node-input-query-number-field",
-                required: "required",
-                type: "number"
-              }).appendTo(baseRow)
-
-              // direction string drop down option
-              let directionStrRow = $('<div/>', {class: 'input-query-row'}).appendTo(container);
-
-              $('<div/>', {class: 'input-query-label'}).text("direction").appendTo(directionStrRow);
-
-              let directionSelect = $('<select/>', {class: "node-input-query-direction-select", type: "text"})
-                  .appendTo(directionStrRow)
-
-              let directionSelectOptions = [{v: null, l: 'none'}, {v: 'asc', l: 'ascending'}, {
-                v: 'desc',
-                l: 'descending'
-              }]
-
-              for (let x = 0; x < directionSelectOptions.length; x++) {
-                directionSelect.append($("<option></option>").val(directionSelectOptions[x].v).text(directionSelectOptions[x].l));
-              }
-
-              // operation dropdown option
-              let operationOptRow = $('<div/>', {class: 'input-query-row'}).appendTo(container);
-
-              $('<div/>', {class: 'input-query-label'}).text("operation").appendTo(operationOptRow);
-
-              let operationSelect = $('<select/>', {
-                class: "node-input-query-operation-string"
-              }).appendTo(operationOptRow)
-
-              let operationOptions = ["<", "<=", "==", ">", ">=", "array-contains"]
-
-              for (let x = 0; x < operationOptions.length; x++) {
-                operationSelect.append($("<option></option>").val(operationOptions[x]).text(operationOptions[x]));
-              }
-
-              // value field option
-              let valueFieldRow = $('<div/>', {class: 'input-query-row'}).appendTo(container);
-
-              $('<div/>', {class: 'input-query-label'}).text("value").appendTo(valueFieldRow);
-
-              let valueFieldInput = $('<input/>', {
-                class: "node-input-query-value-field",
-                required: "required",
-                type: "text",
-                placeholder: "value"
-              }).appendTo(valueFieldRow)
-
-              methodSelect.change(function () {
-                let type = $(this).val()
-                switch (type) {
-                  case 'where':
-                    textArgument.show()
-                    valueFieldRow.show()
-                    operationOptRow.show()
-                    numberArgument.hide()
-                    directionStrRow.hide()
-                    break;
-                  case 'orderBy':
-                    textArgument.show()
-                    directionStrRow.show()
-                    numberArgument.hide()
-                    operationOptRow.hide()
-                    valueFieldRow.hide()
-                    break;
-                  case 'startAt':
-                  case 'endAt':
-                  case 'startAfter':
-                  case 'endBefore':
-                    textArgument.show()
-                    numberArgument.hide()
-                    directionStrRow.hide()
-                    operationOptRow.hide()
-                    valueFieldRow.hide()
-                    break;
-                  case 'offset':
-                  case 'limit':
-                    numberArgument.show()
-                    textArgument.hide()
-                    directionStrRow.hide()
-                    operationOptRow.hide()
-                    valueFieldRow.hide()
-                    break;
-                }
-              });
-
-              const dataKeys = Object.keys(data)
-              if (dataKeys.length > 0) {
-                const method = dataKeys[0]
-                const value = data[method]
-
-                methodSelect.val(method)
-
-                switch (method) {
-                  case 'where':
-                    textArgument.val(value.field)
-                    operationSelect.val(value.operation)
-                    valueFieldInput.val(value.value)
-                    break;
-                  case 'orderBy':
-                    textArgument.val(value.field)
-                    directionSelect.val(value.direction)
-                    break;
-                  case 'startAt':
-                  case 'endAt':
-                  case 'startAfter':
-                  case 'endBefore':
-                    textArgument.val(value)
-                    break;
-                  case 'limit':
-                  case 'offset':
-                    numberArgument.val(value)
-                    break;
-                }
-
-                methodSelect.change()
-                textArgument.change()
-                numberArgument.change()
-                directionSelect.change()
-                operationSelect.change()
-              } else {
-                // Default method
-                methodSelect.val("orderBy").change()
-              }
-            },
-            removable: true,
-            sortable: true
-          })
-
-      if (!this.query) this.query = []
+      if (!this.query) this.query = [];
 
       for (var i = 0; i < this.query.length; i++) {
         var query = this.query[i];
         listContainer.editableList('addItem', query);
       }
+
+      // Expert zone accordion
+      $('.collapsible').accordion({
+        collapsible: true,
+        active: this.snapHandler ? 0 : false
+      });
+
+      // Snap Handler editor
+      this.editor = RED.editor.createEditor({
+        id: 'node-input-func-editor',
+        mode: 'ace/mode/nrjavascript',
+        value: this.snapHandler,
+        globals: {
+          msg: true,
+          send: true,
+          error: true,
+          context: true,
+          RED: true,
+          util: true,
+          Buffer: true,
+          console: true,
+          // can be accessed from within the context object
+          flow: false,
+          global: false,
+          // A little too much bloat to support
+          setTimeout: false,
+          setInterval: false,
+          clearTimeout: false,
+          clearInterval: false
+        }
+      });
+
+      this.editor.focus();
+
+      RED.library.create({
+        url: 'functions',
+        type: 'function',
+        editor: this.editor,
+        mode: 'ace/mode/nrjavascript',
+        elementPrefix: 'input-snap-',
+        fields: ['name'],
+        ext: 'js'
+      });
+
+      const fullScreenEditor = $('#node-function-expand-js');
+      RED.popover.tooltip(fullScreenEditor, RED._('node-red:common.label.expand'));
+      fullScreenEditor.on('click', function (e) {
+        e.preventDefault();
+        RED.editor.editJavaScript({
+          value: node.snapHandler,
+          width: 'Infinity',
+          cursor: node.editor.getCursorPosition(),
+          mode: 'ace/mode/nrjavascript',
+          complete: function (v, cursor) {
+            node.editor.setValue(v, -1);
+            node.editor.gotoLine(cursor.row + 1, cursor.column, false);
+            setTimeout(function () {
+              node.editor.focus();
+            }, 300);
+          }
+        });
+      });
     },
     oneditsave: function () {
-      const queryItems = $("#node-input-query-container").editableList("items")
-      const node = this
+      const queryItems = $('#node-input-query-container').editableList('items');
+      const node = this;
 
-      node.query = []
+      node.query = [];
 
       queryItems.each(function () {
-        const queries = $(this)
-        const method = queries.find(".node-input-query-method-type").val()
+        const queries = $(this);
+        const method = queries.find('.node-input-query-method-type').val();
 
-        let q = {}
+        let q = {};
 
-        const textFieldArgument = queries.find(".node-input-query-text-field").val()
-        const numberFieldArgument = queries.find(".node-input-query-number-field").val()
-        const value = queries.find(".node-input-query-value-field").val()
+        const textFieldArgument = queries.find('.node-input-query-text-field').val();
+        const numberFieldArgument = queries.find('.node-input-query-number-field').val();
+        const value = queries.find('.node-input-query-value-field').val();
 
         switch (method) {
           case 'where':
-            const operation = queries.find(".node-input-query-operation-string").val()
-            q.where = {field: textFieldArgument, operation, value}
+            const operation = queries.find('.node-input-query-operation-string').val();
+            q.where = {field: textFieldArgument, operation, value};
             break;
           case 'orderBy':
-            const direction = queries.find(".node-input-query-direction-select").val()
-            q.orderBy = {field: textFieldArgument, direction}
+            const direction = queries.find('.node-input-query-direction-select').val();
+            q.orderBy = {field: textFieldArgument, direction};
             break;
           case 'startAt':
           case 'endAt':
           case 'startAfter':
           case 'endBefore':
-            let valueArray = textFieldArgument.split(',').map((item) => item.trim())
-            q[method] = valueArray.length === 1 ? valueArray[0] : valueArray
+            let valueArray = textFieldArgument.split(',').map((item) => item.trim());
+            q[method] = valueArray.length === 1 ? valueArray[0] : valueArray;
             break;
           case 'limit':
           case 'offset':
-            q[method] = parseInt(numberFieldArgument)
+            q[method] = parseInt(numberFieldArgument);
             break;
         }
 
-        node.query.push(q)
-      })
+        node.query.push(q);
+      });
+
+      // Snap handler editor
+      var annot = this.editor.getSession().getAnnotations();
+      const errors = [];
+
+      for (var k = 0; k < annot.length; k++) {
+        if (annot[k].type === 'error') {
+          errors.push(annot[k])
+        }
+      }
+
+      if(errors.length) {
+        console.group('Snapshot handler errors');
+        errors.forEach(e => console.error(`${e.text} at column ${e.column} row ${e.row}`));
+        console.groupEnd();
+      }
+      node.snapHandler = this.editor.getValue();
     }
   });
 </script>
-
