@@ -5,7 +5,7 @@ module.exports = function (RED) {
 
   function FirebaseAdminConfig(n) {
     RED.nodes.createNode(this, n);
-    var node = this;
+    const node = this;
 
     try {
       node.serviceAccountJson = JSON.parse(node.credentials.serviceAccountJson);

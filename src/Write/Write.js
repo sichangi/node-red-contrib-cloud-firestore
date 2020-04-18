@@ -1,26 +1,26 @@
 const FirestoreWriteNode = require('./WriteNode');
 
-function validateNodeConfig(n){
-  if (!n.collection){
-    throw "No collection ref specified";
+function validateNodeConfig(n) {
+  if (!n.collection) {
+    throw 'No collection ref specified';
   }
 
-  if (!n.operation){
-    throw "No operation specified";
+  if (!n.operation) {
+    throw 'No operation specified';
   }
 
   if (!n.admin) {
-    throw "No admin specified";
+    throw 'No admin specified';
   }
 }
 
-module.exports = function(RED) {
-  "use strict";
+module.exports = function (RED) {
+  'use strict';
 
   function FirestoreWrite(n) {
-    validateNodeConfig(n)
+    validateNodeConfig(n);
 
-    RED.nodes.createNode(this,n);
+    RED.nodes.createNode(this, n);
     var node = this;
 
     node.collection = n.collection;
@@ -29,14 +29,14 @@ module.exports = function(RED) {
     node.options = n.options;
     node.admin = RED.nodes.getNode(n.admin);
 
-    const firestoreWriteNode = new FirestoreWriteNode(node)
+    const firestoreWriteNode = new FirestoreWriteNode(node);
 
     node.on('input', msg => {
-      firestoreWriteNode.onInput(msg, node.send.bind(node), node.error.bind(node), node)
-    })
+      firestoreWriteNode.onInput(msg, node.send.bind(node), node.error.bind(node), node);
+    });
   }
 
-  RED.nodes.registerType("Firestore out", FirestoreWrite);
-}
+  RED.nodes.registerType('Firestore out', FirestoreWrite);
+};
 
 
