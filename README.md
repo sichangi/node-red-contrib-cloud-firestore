@@ -27,6 +27,7 @@ your apps service account credentials which can be generated under
 ### Firestore Read
 
 Node fetches data from a referenced collection, subcollection or document.
+
 Configurations can be made within the node or on the ``msg.firestore`` property:
 - ``collection``: [string] The collection or subCollection in reference
 - ``document``: [string] The document reference under the defined collection
@@ -37,8 +38,9 @@ Configurations can be made within the node or on the ``msg.firestore`` property:
 
 Response data from the operation is output through the ``msg.payload`` property
 
+#### Upstream input queries
 <details>
-  <summary><h4>Upstream input queries</h4></summary>
+  <summary>Click to Expand</summary>
   
   To perform dynamic queries with the read node through input, you need to supply an array of objects on the ``msg.firestore.query`` property in the order they will be chained
   with the query method as the only property and it's value being an array of arguments, or a single string value as show below.
@@ -90,8 +92,9 @@ Response data from the operation is output through the ``msg.payload`` property
   ```
 </details>
 
+#### Custom snapshot handler
 <details>
-  <summary><h4>Custom snapshot handler</h4></summary>
+  <summary>Click to Expand</summary>
 
   You can also write your own snapshot handler under the expert zone accordion. The editor is similar to the core function node & but supports
   the following global objects: ``config`` (the nodes settings), ``snap`` ([query snapshot](https://firebase.google.com/docs/reference/js/firebase.firestore.QuerySnapshot)), ``util``(nodejs), ``msg``, ``context``, ``RED.util`` & ``console``.
@@ -124,8 +127,9 @@ Response data from the operation is output through the ``msg.payload`` property
 
 </details>
 
+#### Realtime edge cases
 <details>
-  <summary><h4>Realtime edge cases</h4></summary>
+  <summary>Click to Expand</summary>
   
   If you intend on passing in dynamic configurations from an upstream node while still having realtime enabled, 
   the node will not have your upstream values recorded during the next restart. This could result in some unexpected
@@ -149,8 +153,9 @@ Configurations made from within the node or on the ``msg.firestore`` property:
 - ``options``: [object] additional options passed to firebase (currently
   specific to ``set`` operations)
 
+#### Handling Firestore classes & sentinels
 <details>
-  <summary><h4>Handling Firestore classes & sentinels</h4></summary>
+  <summary>Click to Expand</summary>
     
   Due to the nature of Cloud firestores implementation, some actions need special handling.
   
