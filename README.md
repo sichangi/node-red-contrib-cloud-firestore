@@ -45,7 +45,7 @@ Response data from the operation is output through the ``msg.payload`` property
   To perform dynamic queries with the read node through input, you need to supply an array of objects on the ``msg.firestore.query`` property in the order they will be chained
   with the query method as the only property and it's value being an array of arguments, or a single string value as show below.
   
-  ```json5
+  ```
   {
       query : [
           {where: ["state", "==", "CA"]},
@@ -56,7 +56,7 @@ Response data from the operation is output through the ``msg.payload`` property
   // => reference.where("state", "==", "CA").where("population", "<", 1000000)
   ```
   
-  ```json5
+  ```
   {
       query : [
           {orderBy: "name"},
@@ -67,7 +67,7 @@ Response data from the operation is output through the ``msg.payload`` property
   // => reference.orderBy("name").limit(2)
   ```
   
-  ```json5
+  ```
   {
       query : [
           {where: ["population", ">", 100000]},
@@ -79,7 +79,7 @@ Response data from the operation is output through the ``msg.payload`` property
   // => reference.where("population", ">", 100000).orderBy("population", "asc").limit(2)
   ```
   
-  ```json5
+  ```
   {
       query : [
           {orderBy: "population"},
@@ -104,7 +104,7 @@ Response data from the operation is output through the ``msg.payload`` property
   
   Do remember that what you ``return`` will then be sent as the output payload.
   The following example returns an array of objects, while logging to the cmd console
-  ```js
+  ```
   const docs = [];
   let added = context.flow.get('added');
 
@@ -166,7 +166,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
   
   To perform [array updates](https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array), you'll
   need to wrap your elements in an object with the ``_arrayUnion`` or ``_arrayRemove`` property to add or remove elements respectively within an array
-  ```js
+  ```
   msg.payload = {
       animals: {
           _arrayUnion: 'goats'
@@ -177,7 +177,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
   }
   ```
   becomes:
-  ```js
+  ```
   msg.payload = {
       animals: firestore.FieldValue.arrayUnion("goats"),
       farmers: firestore.FieldValue.arrayRemove({name: "John Doe"})
@@ -188,7 +188,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
   
   Objects within the payload received by the Write Node containing a ``_lat`` and ``_lng`` property will be replaced with the appropriate [GeoPoint](https://firebase.google.com/docs/reference/admin/node/admin.firestore.GeoPoint) class
   
-  ```js
+  ```
   msg.payload = {
      farm:{
          location: {
@@ -204,7 +204,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
   }
   ```
   becomes:
-  ```js
+  ```
   msg.payload = {
       farm: {
           location: new firestore.GeoPoint(-1.232134, 36.123131),
@@ -221,14 +221,14 @@ Configurations made from within the node or on the ``msg.firestore`` property:
   
   Properties with the ``_serverTimestamp`` string value will be replace with the appropriate [serverTimestamp](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.serverTimestamp) sentinel
   
-  ```js
+  ```
   msg.payload = {
       time: '_serverTimestamp'
   }
   ```
   
   becomes:
-  ```js
+  ```
   msg.payload = {
       time: firestore.FieldValue.serverTimestamp()
   }
@@ -238,14 +238,14 @@ Configurations made from within the node or on the ``msg.firestore`` property:
   
   Properties with the ``_delete`` string value will be replaced with the appropriate [delete](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.delete) sentinel
   
-  ```js
+  ```
   msg.payload = {
       unwantedField: '_delete'
   }
   ```
   
   becomes:
-  ```js
+  ```
   msg.payload = {
       unwantedField: firestore.FieldValue.delete()
   }
@@ -258,7 +258,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
 Both the read & write nodes expose a ``firebase`` object that contains the current app instance and a reference 
 to the firebase admin sdk, which allows you to extend the node to your liking.
 
- ```js
+ ```
   msg.firebase = {
     "app": "...", // => current firebase instance
     "admin": "...", // => firebase admin sdk
