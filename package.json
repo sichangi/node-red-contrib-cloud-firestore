@@ -1,19 +1,19 @@
 {
   "name": "node-red-contrib-cloud-firestore",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sichangi/node-red-contrib-cloud-firestore.git"
+    "url": "https://github.com/sichangi/node-red-contrib-cloud-firestore.git"
   },
   "bugs": {
-    "url": "https://github.com/Sichangi/node-red-contrib-cloud-firestore/issues"
+    "url": "https://github.com/sichangi/node-red-contrib-cloud-firestore/issues"
   },
   "author": "Mecolela Sichangi",
-  "homepage": "https://github.com/Sichangi/node-red-contrib-cloud-firestore#readme",
+  "homepage": "https://github.com/sichangi/node-red-contrib-cloud-firestore#readme",
   "keywords": [
     "cloud firestore",
     "firestore",
