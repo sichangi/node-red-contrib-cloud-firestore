@@ -12,7 +12,16 @@
   "bugs": {
     "url": "https://github.com/sichangi/node-red-contrib-cloud-firestore/issues"
   },
-  "author": "Mecolela Sichangi",
+  "author": {
+    "name": "Mecolela Sichangi",
+    "url": "https://me.cole.la"
+  },
+  "contributors": [
+    {
+      "name": "Jean-Baptiste Richardet",
+      "url": "https://twitter.com/JbIPS"
+    }
+  ],
   "homepage": "https://github.com/sichangi/node-red-contrib-cloud-firestore#readme",
   "keywords": [
     "cloud firestore",
