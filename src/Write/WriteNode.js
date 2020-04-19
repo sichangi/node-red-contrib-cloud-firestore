@@ -91,7 +91,7 @@ FirestoreWriteNode.prototype.preparePayload = function (load) {
     }
 
     if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.increment)) {
-      obj[key] = this.Firestore.FieldValue.increment(obj[key][this.ReplaceMap.increment])
+      obj[key] = this.firebase.firestore.FieldValue.increment(obj[key][this.ReplaceMap.increment])
     }
 
     if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lat) && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lng)) {
