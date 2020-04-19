@@ -25,6 +25,7 @@ function FirestoreWriteNode(config) {
     arrayUnion: '_arrayUnion',
     arrayRemove: '_arrayRemove',
     serverTimestamp: '_serverTimestamp',
+    increment: '_increment',
     GeoPoint: {lat: '_lat', lng: '_lng'}
   };
 }
@@ -86,6 +87,10 @@ FirestoreWriteNode.prototype.preparePayload = function (load) {
 
     if (obj[key] === this.ReplaceMap.delete) {
       obj[key] = this.firebase.firestore.FieldValue.delete();
+    }
+
+    if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.increment)) {
+      obj[key] = this.Firestore.FieldValue.increment(obj[key][this.ReplaceMap.increment])
     }
 
     if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lat) && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lng)) {
