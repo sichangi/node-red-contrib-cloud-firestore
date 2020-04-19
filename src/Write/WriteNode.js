@@ -1,4 +1,5 @@
 const {traverse} = require('../utils');
+const Mustache = require('mustache');
 
 function FirestoreWriteNode(config) {
   if (!config.admin) {
@@ -38,8 +39,8 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {};
   msg.firebase = {app: this.instance, admin: this.firebase};
 
-  const col = input.collection || this.collection;
-  const doc = input.document || this.document;
+  const col = input.collection || Mustache.render(this.collection, msg);
+  const doc = input.document || Mustache.render(this.document, msg);
   const op = input.operation || this.operation;
   const opts = input.options || this.options;
   const payload = this.preparePayload(msg.payload);
