@@ -24,6 +24,7 @@ function FirestoreReadNode(config) {
   this.realtime = config.realtime;
   this.query = config.query;
   this.snapHandler = config.snapHandler;
+  this.eject = config.eject;
   this.snapListener = null;
 
   // register a realtime listener on node start
@@ -37,7 +38,10 @@ function FirestoreReadNode(config) {
 
 FirestoreReadNode.prototype.main = function (msg, send, error) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore || {} : {};
-  msg.firebase = {app: this.instance, admin: this.firebase};
+
+  if (input.eject || this.eject) {
+    msg.firebase = {app: this.instance, admin: this.firebase};
+  }
 
   const col = input.collection = input.collection || Mustache.render(this.collection, msg);
   const group = input.group = input.group || this.group;
@@ -69,12 +73,16 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
   if (doc && group) throw 'Cannot set document ref in a collection group query';
 
   let baseRef, referenceQuery;
-  if (group) {
-    baseRef = this.firestore.collectionGroup(col);
-    referenceQuery = this.prepareQuery(baseRef, query);
-  } else {
-    baseRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col);
-    referenceQuery = doc ? baseRef : this.prepareQuery(baseRef, query);
+  try {
+    if (group) {
+      baseRef = this.firestore.collectionGroup(col);
+      referenceQuery = this.prepareQuery(baseRef, query);
+    } else {
+      baseRef = doc ? this.firestore.collection(col).doc(doc) : this.firestore.collection(col);
+      referenceQuery = doc ? baseRef : this.prepareQuery(baseRef, query);
+    }
+  } catch (e) {
+    return Promise.reject(e);
   }
 
   // remove existing listener before registering another
@@ -82,11 +90,12 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
 
   if (disable) {
     msg.payload = referenceQuery;
-    return send(msg);
+    send(msg);
+    return Promise.resolve();
   }
 
   if (!rt) {
-    referenceQuery.get()
+    return referenceQuery.get()
       .then((snap) => snapHandler(snap))
       .then((result) => {
         msg.payload = result;
@@ -101,6 +110,7 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
           send(msg);
         }).catch(err => error(err, msg));
     }, (err) => error(err, msg));
+    return Promise.resolve();
   }
 };
 

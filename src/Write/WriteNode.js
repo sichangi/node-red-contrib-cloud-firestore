@@ -20,6 +20,7 @@ function FirestoreWriteNode(config) {
   this.collection = config.collection;
   this.operation = config.operation;
   this.options = config.options;
+  this.eject = config.eject;
   this.document = config.document;
   this.ReplaceMap = {
     delete: '_delete',
@@ -37,7 +38,10 @@ FirestoreWriteNode.prototype.validateOperation = function ({operation: op, docum
 
 FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {};
-  msg.firebase = {app: this.instance, admin: this.firebase};
+
+  if (input.eject || this.eject) {
+    msg.firebase = {app: this.instance, admin: this.firebase};
+  }
 
   const col = input.collection || Mustache.render(this.collection, msg);
   const doc = input.document || Mustache.render(this.document, msg);

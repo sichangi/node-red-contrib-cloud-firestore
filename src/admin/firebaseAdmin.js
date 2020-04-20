@@ -1,7 +1,7 @@
 const FirebaseAdminNode = require('./firebaseAdminNode');
 
 module.exports = function (RED) {
-  "use strict";
+  'use strict';
 
   function FirebaseAdminConfig(n) {
     RED.nodes.createNode(this, n);
@@ -10,11 +10,11 @@ module.exports = function (RED) {
     try {
       node.serviceAccountJson = JSON.parse(node.credentials.serviceAccountJson);
     } catch (e) {
-      throw "Bad service account json";
+      throw 'Invalid service account json';
     }
 
     if (!node.serviceAccountJson) {
-      throw "Bad node config";
+      throw 'No service account set';
     }
 
     const firebaseAdminNode = new FirebaseAdminNode(node);
@@ -25,9 +25,9 @@ module.exports = function (RED) {
     node.on('close', firebaseAdminNode.onClose);
   }
 
-  RED.nodes.registerType("firebase admin", FirebaseAdminConfig, {
+  RED.nodes.registerType('firebase admin', FirebaseAdminConfig, {
     credentials: {
-      serviceAccountJson: {type: "text"}
+      serviceAccountJson: {type: 'text'}
     }
   });
-}
+};

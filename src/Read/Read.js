@@ -25,6 +25,7 @@ module.exports = function (RED) {
     node.document = n.document;
     node.realtime = n.realtime;
     node.query = n.query;
+    node.eject = n.eject;
     node.snapHandler = n.snapHandler;
     node.admin = RED.nodes.getNode(n.admin);
 

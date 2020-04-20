@@ -27,6 +27,7 @@ module.exports = function (RED) {
     node.document = n.document;
     node.operation = n.operation;
     node.options = n.options;
+    node.eject = n.eject;
     node.admin = RED.nodes.getNode(n.admin);
 
     const firestoreWriteNode = new FirestoreWriteNode(node);

@@ -37,7 +37,7 @@
         <div class="form-row">
           <label style="margin-bottom: 0;" for="node-input-snapHandler" class="long"><i class="fa fa-wrench"></i> Snapshot handler</label>
         </div>
-        <div class="form-row" style="grid-template-columns: 1.4fr 3fr .5fr;">
+        <div class="form-row" style="grid-template-columns: 2.1fr 3fr .5fr;">
           <label for="input-snap-name" style="width: 100%;">File Name (optional)</label>
           <input type="text" id="input-snap-name">
         </div>
@@ -45,22 +45,17 @@
           <div style="position: absolute; top: -100px; right:-30px; bottom:calc(100% + 3px);"><button id="node-function-expand-js" class="red-ui-button red-ui-button-small"><i class="fa fa-expand"></i></button></div>
           <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-func-editor" ></div>
         </div>
+        <div class="form-row" style="margin-top: 1rem; grid-template-columns: 3fr 4fr">
+          <label for="node-input-eject" style="width: 100%"><i class="fa fa-bolt"></i> Eject Firebase Object </label>
+          <input type="checkbox" id="node-input-eject">
+        </div>
       <div>
     </div>
   </div>
 </script>
 
 <script type="text/x-red" data-help-name="Firestore in">
-    <p>The node fetches data from a referenced collection or referenced document</p>
-    <h3>Details</h3>
-    This node support the Mustache template for the <code>collection</code> and <code>document</code> properties.
-
-    Example:
-    <pre>msg = {
-  collection: 'foo',
-  document: 'bar'
-}</pre>
-    with this message, set the <code>collection</code> and <code>document</code> properties in the editor to <code>{{collection}}</code> and <code>{{document}}</code> to do a query in the foo collection for document bar.
+    <b>The node fetches data from a referenced collection or referenced document</b>
     <h3>Inputs</h3>
     <p>Received on the <code>msg.firestore</code> property</p>
     <dl class="message-properties">
@@ -88,6 +83,10 @@
           disableHandler <span class="property-type">boolean</span>
           </dt>
         <dd>disables the default snapshot handler, exposing a built query reference as the payload</dd>
+        <dt class="optional">
+          eject <span class="property-type">boolean</span>
+          </dt>
+        <dd>Output the firebase app and admin instance on the <code>msg.firebase</code> property</dd>
     </dl>
     <p>
       The above inputs can also be set from within the
@@ -102,6 +101,15 @@
    query: [{where: ["name", "==", "milky"]}]
 }</pre>
     </p>
+    <h3>Mustache Templating</h3>
+    <p>The node supports Mustache templating on the <code>collection</code> and <code>document</code> properties.</p>
+    <p>For Example:</p>
+    <pre>msg = {
+  collection: 'foo',
+  document: 'bar'
+}</pre>
+    <p>With the <code>collection</code> property set to <code>{{collection}}</code> and the <code>document</code> property set to <code>{{document}}</code> in the editor,
+     the queried collection will be <code>foo</code> & document will be <code>bar</code>.</p>
     <h3>Outputs</h3>
     Response data from the operation is output through the <code>msg.payload</code> property
     <h3>❗ Expert Zone</h3>
@@ -185,7 +193,8 @@ return docs;</pre>
       realtime: {value: false},
       query: {value: []},
       admin: {type: 'firebase admin', required: true},
-      snapHandler: {required: false}
+      snapHandler: {required: false},
+      eject: {required: false, value: false}
     },
     color: '#F3B567',
     inputs: 1,

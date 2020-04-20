@@ -132,7 +132,7 @@ outcomes.
 A way around this would be for the node to store your most recent settings from the interface / upstream nodes
 into node-red's provided [storage mechanism](https://nodered.org/docs/user-guide/context).
 
-To enable this workaround in the node, you'll have to change you're instances default storage module from ``memory``
+To enable this workaround in the node, you'll have to change your instances default storage module from ``memory``
 to ``localfilesystem`` in your ``settings.js`` file. Read more on this [here](https://nodered.org/docs/api/context/store/localfilesystem)
  
 
@@ -223,6 +223,25 @@ msg.payload = {
 }
 ```
 
+**Increment**
+
+Properties with the ``_increment`` string value will be replaced with the appropriate increment sentinel
+
+```js
+msg.payload = {
+  itemCount: {
+    '_increment': 30
+  }
+}
+```
+
+becomes:
+```js
+msg.payload = {
+  itemCount: firestore.FieldValue.increment(30)
+}
+```
+
 **Delete**
 
 Properties with the ``_delete`` string value will be replaced with the appropriate [delete](https://firebase.google.com/docs/reference/admin/node/admin.firestore.FieldValue#.delete) sentinel
@@ -240,16 +259,39 @@ msg.payload = {
 }
 ```
 
-## Extensibility & further uses down the flow
+## Extensibility & additional uses
 
-Both the read & write nodes expose a ``firebase`` object that contains the current app instance and a reference 
-to the firebase admin sdk, which allows you to extend the node to your liking.
+### Mustache templating
+
+Both the read & write nodes support mustache templating on the ``collection`` & ``document`` properties, which allows you to
+cherry pick your collection / document properties directly from the ``msg`` object.
+
+For example, setting the collection field to ``{{col}}`` with a message object like
+```js
+msg = {
+  col: "users"
+}
+```
+
+will have the corresponging node run operations against the ``users`` collection.
+
+### Firebase instances
+
+Both the read & write nodes can expose a ``firebase`` object that contains the current app instance and a reference 
+to the firebase admin sdk, which allows you to extend the node to your liking. Simply enable the eject property in the ui / via
+an upstream input.
 
  ```js
-  msg.firebase = {
-    "app": "...", // current firebase instance
-    "admin": "...", // firebase admin sdk
-  }
+// upstream input / via the ui
+msg.firestore = {
+  eject: true
+};
+
+// output
+msg.firebase = {
+  "app": "...", // current firebase instance
+  "admin": "...", // firebase admin sdk
+};
  ```
 
 ## TODO

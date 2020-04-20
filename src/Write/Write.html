@@ -25,6 +25,15 @@
       <label for="node-input-document"><i class="fa fa-file"></i> Document </label>
       <input type="text" id="node-input-document" placeholder="document ref">
   </div>
+
+    <div class="collapsible">
+      <div class="form-row-header">❗ Expert zone</div>
+        <div class="form-row" style="grid-template-columns: 3fr 4fr">
+          <label for="node-input-eject" style="width: 100%"><i class="fa fa-bolt"></i> Eject Firebase Object </label>
+          <input type="checkbox" id="node-input-eject">
+        </div>
+      </div
+    </div>
 </div>
 </script>
 
@@ -48,6 +57,11 @@
           document <span class="property-type">string</span>
           </dt>
         <dd>The document reference to write to</dd>
+
+        <dt class="optional">
+          eject <span class="property-type">boolean</span>
+          </dt>
+        <dd>Output the firebase app and admin instance on the <code>msg.firebase</code> property</dd>
     </dl>
     <h4>Note: set and update operations require a document reference</h4>
     <p>
@@ -58,6 +72,15 @@
         operation: 'update'
       }</pre>
     </p>
+    <h3>Mustache Templating</h3>
+    <p>The node supports Mustache templating on the <code>collection</code> and <code>document</code> properties.</p>
+    <p>For Example:</p>
+    <pre>msg = {
+  collection: 'foo',
+  document: 'bar'
+}</pre>
+    <p>With the <code>collection</code> property set to <code>{{collection}}</code> and the <code>document</code> property set to <code>{{document}}</code> in the editor,
+     the target collection will be <code>foo</code> & document will be <code>bar</code>.</p>
     <h3>Performing update operations</h3>
     <p>Due to the nature of firestores implementation, some actions need special handling.</p>
     <h4>Handling arrays</h4>
@@ -99,7 +122,8 @@
           return val === 'set' || val === 'add' || val === 'update' || val === 'delete'
         }
       },
-      admin: {type: "firebase admin", required: true}
+      admin: {type: "firebase admin", required: true},
+      eject: {required: false, value: false}
     },
     color: "#F3B567",
     inputs: 1,
@@ -111,6 +135,13 @@
     },
     labelStyle: function () {
       return (this.collection && !this.name) ? "node_label_italic" : "";
+    },
+    oneditprepare: function () {
+      // Expert zone accordion
+      $('.collapsible').accordion({
+        collapsible: true,
+        active: this.eject ? 0 : false
+      });
     }
   });
 </script>
