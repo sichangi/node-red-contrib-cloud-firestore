@@ -52,6 +52,15 @@
 
 <script type="text/x-red" data-help-name="Firestore in">
     <p>The node fetches data from a referenced collection or referenced document</p>
+    <h3>Details</h3>
+    This node support the Mustache template for the <code>collection</code> and <code>document</code> properties.
+
+    Example:
+    <pre>msg = {
+  collection: 'foo',
+  document: 'bar'
+}</pre>
+    with this message, set the <code>collection</code> and <code>document</code> properties in the editor to <code>{{collection}}</code> and <code>{{document}}</code> to do a query in the foo collection for document bar.
     <h3>Inputs</h3>
     <p>Received on the <code>msg.firestore</code> property</p>
     <dl class="message-properties">

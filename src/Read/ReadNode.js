@@ -1,6 +1,7 @@
 const {objectTypeOf} = require('../utils');
 const util = require('util');
 const vm = require('vm');
+const Mustache = require('mustache');
 
 function FirestoreReadNode(config) {
   if (!config.admin) {
@@ -38,9 +39,9 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore || {} : {};
   msg.firebase = {app: this.instance, admin: this.firebase};
 
-  const col = input.collection = input.collection || this.collection;
+  const col = input.collection = input.collection || Mustache.render(this.collection, msg);
   const group = input.group = input.group || this.group;
-  const doc = input.document = input.document || this.document;
+  const doc = input.document = input.document || Mustache.render(this.document, msg);
   const rt = input.realtime = input.realtime || this.realtime;
   const query = input.query = input.query || this.query;
   const disable = input.disableHandler = input.disableHandler || false;

@@ -32,7 +32,8 @@
     "google"
   ],
   "dependencies": {
-    "firebase-admin": "^8.10.0"
+    "firebase-admin": "^8.10.0",
+    "mustache": "^4.0.1"
   },
   "node-red": {
     "nodes": {
