@@ -131,7 +131,7 @@
     icon: "file.png",
     align: "right",
     label: function () {
-      return this.name || this.collection && this.operation ? `${this.operation} ${this.collection}` : 'Firestore Write'
+      return this.name || (this.collection && this.operation ? `${this.operation} ${this.collection}` : 'Firestore Write')
     },
     labelStyle: function () {
       return (this.collection && !this.name) ? "node_label_italic" : "";
