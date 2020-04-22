@@ -50,9 +50,6 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
   const query = input.query = input.query || this.query;
   const disable = input.disableHandler = input.disableHandler || false;
 
-  // Resolves any defaults across the entire node
-  Object.keys(input).forEach(key => this[key] = input[key]);
-
   let snapHandler = this.snapHandler;
   if (!disable) {
     snapHandler = this.prepareSnapHandler(this.snapHandler, {
@@ -183,7 +180,7 @@ FirestoreReadNode.prototype.prepareSnapHandler = function (func, ctx = {}) {
 };
 
 FirestoreReadNode.prototype.defaultSnapHandler = function (snap) {
-  if (!this.document) { // get an entire collection
+  if (snap.size || !snap.id) { // got an entire collection
     const docArray = {};
     snap.forEach(function (snapDoc) {
       if (!snapDoc.exists) return;
