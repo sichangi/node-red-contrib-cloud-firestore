@@ -1,14 +1,6 @@
 const FirestoreWriteNode = require('./WriteNode');
 
 function validateNodeConfig(n) {
-  if (!n.collection) {
-    throw 'No collection ref specified';
-  }
-
-  if (!n.operation) {
-    throw 'No operation specified';
-  }
-
   if (!n.admin) {
     throw 'No admin specified';
   }

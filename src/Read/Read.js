@@ -1,10 +1,6 @@
 const FirestoreReadNode = require('./ReadNode');
 
 function validateNodeConfig(n) {
-  if (!n.collection) {
-    throw 'No collection specified';
-  }
-
   if (!n.admin) {
     throw 'No admin specified';
   }

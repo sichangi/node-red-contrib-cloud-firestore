@@ -8,10 +8,6 @@ function FirestoreReadNode(config) {
     throw 'No firebase admin specified';
   }
 
-  if (!config.collection) {
-    throw 'FireStore collection Not Present';
-  }
-
   this.id = config.id;
   this.RED = config.RED;
   this.context = config.context();
@@ -49,6 +45,10 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
   const rt = input.realtime = input.realtime || this.realtime;
   const query = input.query = input.query || this.query;
   const disable = input.disableHandler = input.disableHandler || false;
+
+  if (!col) {
+    throw 'FireStore collection reference not set';
+  }
 
   let snapHandler = this.snapHandler;
   if (!disable) {

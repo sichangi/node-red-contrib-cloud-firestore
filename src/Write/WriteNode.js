@@ -49,6 +49,14 @@ FirestoreWriteNode.prototype.onInput = function (msg, send) {
   const opts = input.options || this.options;
   const payload = this.preparePayload(msg.payload);
 
+  if (!col) {
+    throw 'Firestore collection reference not set';
+  }
+
+  if (!op) {
+    throw 'Firestore write operation not set';
+  }
+
   this.validateOperation({operation: op, document: doc});
 
   let referenceQuery = null;
@@ -72,7 +80,7 @@ FirestoreWriteNode.prototype.onInput = function (msg, send) {
     .then((result) => {
       msg.payload = result;
       send(msg);
-    })
+    });
 };
 
 /**
@@ -90,7 +98,7 @@ FirestoreWriteNode.prototype.preparePayload = function (load) {
     }
 
     if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.increment)) {
-      obj[key] = this.firebase.firestore.FieldValue.increment(obj[key][this.ReplaceMap.increment])
+      obj[key] = this.firebase.firestore.FieldValue.increment(obj[key][this.ReplaceMap.increment]);
     }
 
     if (obj[key] && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lat) && obj[key].hasOwnProperty(this.ReplaceMap.GeoPoint.lng)) {
