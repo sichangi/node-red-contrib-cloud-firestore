@@ -29,11 +29,22 @@ module.exports = function (RED) {
     node.options = n.options;
     node.eject = n.eject;
     node.admin = RED.nodes.getNode(n.admin);
+    node.status({});
 
     const firestoreWriteNode = new FirestoreWriteNode(node);
 
-    node.on('input', msg => {
-      firestoreWriteNode.onInput(msg, node.send.bind(node), node.error.bind(node), node);
+    node.on('input', (msg, send, done) => {
+      node.status({fill:"blue",shape:"ring",text:"querying..."})
+      firestoreWriteNode.onInput(msg, node.send.bind(node))
+      .then(() => {
+        node.status({fill:"green",shape:"dot",text:"success"})
+        // Tells NodeRED we've finished
+        if(done) done()
+      })
+      .catch((err) => {
+        node.status({fill:"red",shape:"dot",text:"error"})
+        node.error(err)
+      })
     });
   }
 

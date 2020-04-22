@@ -36,7 +36,7 @@ FirestoreWriteNode.prototype.validateOperation = function ({operation: op, docum
   if ((op === 'set' || op === 'update' || op === 'delete') && !document) throw `Operation ${op} requires a document reference`;
 };
 
-FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
+FirestoreWriteNode.prototype.onInput = function (msg, send) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {};
 
   if (input.eject || this.eject) {
@@ -65,19 +65,14 @@ FirestoreWriteNode.prototype.onInput = function (msg, send, errorCb) {
       referenceQuery = this.firestore.collection(col).doc(doc)[op](payload);
       break;
     default:
-      return handleFailure(`Invalid operation given: ${op}`, msg);
+      return Promise.reject(`Invalid operation given: ${op}`);
   }
 
-  referenceQuery
+  return referenceQuery
     .then((result) => {
       msg.payload = result;
       send(msg);
     })
-    .catch((err) => handleFailure(err, msg));
-
-  function handleFailure(err, msg) {
-    errorCb(err, msg);
-  }
 };
 
 /**
