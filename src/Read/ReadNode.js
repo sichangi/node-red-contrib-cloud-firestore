@@ -37,14 +37,16 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
 
   if (input.eject || this.eject) {
     msg.firebase = {app: this.instance, admin: this.firebase};
+  } else {
+    delete msg.firestore;
   }
 
-  const col = input.collection = input.collection || Mustache.render(this.collection, msg);
-  const group = input.group = input.group || this.group;
-  const doc = input.document = input.document || Mustache.render(this.document, msg);
-  const rt = input.realtime = input.realtime || this.realtime;
-  const query = input.query = input.query || this.query;
-  const disable = input.disableHandler = input.disableHandler || false;
+  const col = input.collection || Mustache.render(this.collection, msg);
+  const group = input.group || this.group;
+  const doc = input.document || Mustache.render(this.document, msg);
+  const rt = input.realtime || this.realtime;
+  const query = input.query || this.query;
+  const disable = input.disableHandler || false;
 
   if (!col) {
     throw 'FireStore collection reference not set';
@@ -67,7 +69,7 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
     }
   }
 
-  if (doc && group) throw 'Cannot set document ref in a collection group query';
+  if (doc && group) return Promise.reject('Cannot set document ref in a collection group query');
 
   let baseRef, referenceQuery;
   try {
