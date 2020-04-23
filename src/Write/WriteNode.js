@@ -57,7 +57,11 @@ FirestoreWriteNode.prototype.onInput = function (msg, send) {
     throw 'Firestore write operation not set';
   }
 
-  this.validateOperation({operation: op, document: doc});
+  try {
+    this.validateOperation({operation: op, document: doc});
+  } catch(e) {
+    return Promise.reject(e);
+  }
 
   let referenceQuery = null;
 
