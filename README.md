@@ -149,7 +149,7 @@ Configurations made from within the node or on the ``msg.firestore`` property:
 
 #### Handling Firestore classes & sentinels
 
-Due to the nature of Cloud firestores implementation, some actions need special handling.
+Due to the nature of Cloud firestore's implementation, some actions need special handling.
 
 **Arrays**
 
@@ -259,7 +259,7 @@ msg.payload = {
 }
 ```
 
-## Extensibility & additional uses
+## Extensibility & additional use cases
 
 ### Mustache templating
 
@@ -273,7 +273,7 @@ msg = {
 }
 ```
 
-will have the corresponging node run operations against the ``users`` collection.
+will have the corresponding node run operations against the ``users`` collection.
 
 ### Firebase instances
 
