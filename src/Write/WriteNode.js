@@ -41,6 +41,8 @@ FirestoreWriteNode.prototype.onInput = function (msg, send) {
 
   if (input.eject || this.eject) {
     msg.firebase = {app: this.instance, admin: this.firebase};
+  } else {
+    delete msg.firestore;
   }
 
   const col = input.collection || Mustache.render(this.collection, msg);
