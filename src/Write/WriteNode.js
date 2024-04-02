@@ -1,17 +1,10 @@
-const {traverse} = require('../utils');
+const { traverse, objectTypeOf } = require('../utils');
 const Mustache = require('mustache');
+const flatten = require('flat');
 
 function FirestoreWriteNode(config) {
   if (!config.admin) {
     throw 'No firebase admin specified';
-  }
-
-  if (!config.operation) {
-    throw 'FireStore write operation NOT Present';
-  }
-
-  if (!config.collection) {
-    throw 'FireStore collection reference NOT defined';
   }
 
   this.instance = config.admin.app;
@@ -28,11 +21,11 @@ function FirestoreWriteNode(config) {
     arrayRemove: '_arrayRemove',
     serverTimestamp: '_serverTimestamp',
     increment: '_increment',
-    GeoPoint: {lat: '_lat', lng: '_lng'}
+    GeoPoint: { lat: '_lat', lng: '_lng' }
   };
 }
 
-FirestoreWriteNode.prototype.validateOperation = function ({operation: op, document}) {
+FirestoreWriteNode.prototype.validateOperation = function ({ operation: op, document }) {
   if ((op === 'set' || op === 'update' || op === 'delete') && !document) throw `Operation ${op} requires a document reference`;
 };
 
@@ -40,7 +33,7 @@ FirestoreWriteNode.prototype.onInput = function (msg, send) {
   const input = (msg.hasOwnProperty('firestore')) ? msg['firestore'] : {};
 
   if (input.eject || this.eject) {
-    msg.firebase = {app: this.instance, admin: this.firebase};
+    msg.firebase = { app: this.instance, admin: this.firebase };
   } else {
     delete msg.firestore;
   }
@@ -60,8 +53,8 @@ FirestoreWriteNode.prototype.onInput = function (msg, send) {
   }
 
   try {
-    this.validateOperation({operation: op, document: doc});
-  } catch(e) {
+    this.validateOperation({ operation: op, document: doc });
+  } catch (e) {
     return Promise.reject(e);
   }
 
@@ -82,11 +75,10 @@ FirestoreWriteNode.prototype.onInput = function (msg, send) {
       return Promise.reject(`Invalid operation given: ${op}`);
   }
 
-  return referenceQuery
-    .then((result) => {
-      msg.payload = result;
-      send(msg);
-    });
+  return referenceQuery.then((result) => {
+    msg.payload = result;
+    send(msg);
+  });
 };
 
 /**
@@ -94,6 +86,20 @@ FirestoreWriteNode.prototype.onInput = function (msg, send) {
  * @param load
  */
 FirestoreWriteNode.prototype.preparePayload = function (load) {
+  // Change nested objects to dot notated objects
+  traverse(load, (obj, key) => {
+    if (objectTypeOf(obj[key]) === '[object Object]') {
+      const flat = flatten(obj[key]);
+      Object.entries(flat).forEach(([k, v]) => {
+        obj[`${key}.${k}`] = v;
+      });
+      delete obj[key];
+    } else {
+      return true;
+    }
+  });
+
+  // Replace serverTimestamp, delete, increment and GeoPoint after other values are set
   traverse(load, (obj, key) => {
     if (obj[key] === this.ReplaceMap.serverTimestamp) {
       obj[key] = this.firebase.firestore.FieldValue.serverTimestamp();
