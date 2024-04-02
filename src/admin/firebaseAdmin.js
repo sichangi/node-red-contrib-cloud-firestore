@@ -27,7 +27,7 @@ module.exports = function (RED) {
 
   RED.nodes.registerType('firebase admin', FirebaseAdminConfig, {
     credentials: {
-      serviceAccountJson: {type: 'text'}
+      serviceAccountJson: { type: 'text' }
     }
   });
 };

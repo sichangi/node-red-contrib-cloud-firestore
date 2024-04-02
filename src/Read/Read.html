@@ -32,7 +32,7 @@
     </div>
     <hr/>
     <div class="collapsible">
-      <div class="form-row-header">❗ Expert zone</div>
+      <div class="form-row-header">Other Settings</div>
       <div>
         <div class="form-row">
           <label style="margin-bottom: 0;" for="node-input-snapHandler" class="long"><i class="fa fa-wrench"></i> Snapshot handler</label>
@@ -112,8 +112,8 @@
      the queried collection will be <code>foo</code> & document will be <code>bar</code>.</p>
     <h3>Outputs</h3>
     Response data from the operation is output through the <code>msg.payload</code> property
-    <h3>❗ Expert Zone</h3>
-    <p>In the expert zone, you can write your own snapshot handler. By leaving it empty, it resorts to using the default handler.</p>
+    <h3>Other Settings</h3>
+    <p>In the other settings, you can write your own snapshot handler. By leaving it empty, it resorts to using the default handler.</p>
     <p>You'll contextually have access to the following objects: <code>config</code>(this nodes settings), <code>snap</code> (query snapshot), <code>util</code>(nodejs), <code>msg</code>, <code>context</code>, <code>RED.util</code> & <code>console</code>.
     The <code>Promise</code>, <code>Buffer</code> and <code>Date</code> objects are also supported</p>
     <p>The <code>snap</code> object contains the resulting query snapshot. What you <code>return</code> will then be sent in the output payload.</p>
@@ -382,7 +382,7 @@ return docs;</pre>
         listContainer.editableList('addItem', query);
       }
 
-      // Expert zone accordion
+      // Other settings accordion
       $('.collapsible').accordion({
         collapsible: true,
         active: this.snapHandler ? 0 : false

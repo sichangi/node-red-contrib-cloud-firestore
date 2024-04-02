@@ -1,4 +1,4 @@
-const {objectTypeOf} = require('../utils');
+const { objectTypeOf } = require('../utils');
 const util = require('util');
 const vm = require('vm');
 const Mustache = require('mustache');
@@ -25,7 +25,7 @@ function FirestoreReadNode(config) {
 
   // register a realtime listener on node start
   if (this.realtime) {
-    const msg = {firestore: {}};
+    const msg = { firestore: {} };
     const res = this.context.flow.get(`$fst-input-${this.id}`);
     msg.firestore = res || {};
     this.main(msg, config.send.bind(config), config.error.bind(config));
@@ -36,7 +36,7 @@ FirestoreReadNode.prototype.main = function (msg, send, error) {
   const input = (msg.hasOwnProperty('firestore')) ? msg.firestore || {} : {};
 
   if (input.eject || this.eject) {
-    msg.firebase = {app: this.instance, admin: this.firebase};
+    msg.firebase = { app: this.instance, admin: this.firebase };
   } else {
     delete msg.firestore;
   }

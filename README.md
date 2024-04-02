@@ -91,7 +91,7 @@ with the query method as the only property and it's value being an array of argu
 
 #### Custom snapshot handler
 
-You can also write your own snapshot handler under the expert zone accordion. The editor is similar to the core function node & but supports
+You can also write your own snapshot handler under the other settings accordion. The editor is similar to the core function node & but supports
 the following global objects: ``config`` (the nodes settings), ``snap`` ([query snapshot](https://firebase.google.com/docs/reference/js/firebase.firestore.QuerySnapshot)), ``util``(nodejs), ``msg``, ``context``, ``RED.util`` & ``console``.
 The ``Promise``, ``Buffer`` and ``Date`` objects are also supported.
 

@@ -27,7 +27,7 @@
   </div>
 
     <div class="collapsible">
-      <div class="form-row-header">❗ Expert zone</div>
+      <div class="form-row-header">Other Settings</div>
         <div class="form-row" style="grid-template-columns: 3fr 4fr">
           <label for="node-input-eject" style="width: 100%"><i class="fa fa-bolt"></i> Eject Firebase Object </label>
           <input type="checkbox" id="node-input-eject">
@@ -137,7 +137,7 @@
       return (this.collection && !this.name) ? "node_label_italic" : "";
     },
     oneditprepare: function () {
-      // Expert zone accordion
+      // Other settings accordion
       $('.collapsible').accordion({
         collapsible: true,
         active: this.eject ? 0 : false
